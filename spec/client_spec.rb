@@ -1,10 +1,6 @@
 require "spec_helper"
 
-RSpec.describe Paubox do
-  it 'has a version number' do
-    expect(PauboxRuby::VERSION).not_to be nil
-  end
-
+RSpec.describe Paubox::Client do
   describe '#initialize' do
     before do
       Paubox.configure do |config|

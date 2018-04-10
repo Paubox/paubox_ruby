@@ -1,3 +1,3 @@
-module PauboxRuby
+module Paubox
   VERSION = "0.1.0"
 end

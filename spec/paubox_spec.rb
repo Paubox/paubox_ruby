@@ -2,7 +2,7 @@ require "spec_helper"
 
 RSpec.describe Paubox do
   it 'has a version number' do
-    expect(PauboxRuby::VERSION).not_to be nil
+    expect(Paubox::VERSION).not_to be nil
   end
 
   describe '#configure' do

@@ -1,6 +1,6 @@
 module Paubox
   class Client
-    attr_reader :api_key, :api_user, :api_host
+    attr_reader :api_key, :api_user, :api_host, :api_version
 
     def initialize(args = {})
       args = defaults.merge(args)
@@ -9,6 +9,11 @@ module Paubox
       @api_host = args[:api_host]
       @api_version = args[:api_version]
       @test_mode = args[:test_mode]
+      @api_base_endpoint = api_base_endpoint
+    end
+
+    def api_base_endpoint
+      "https://#{api_host}/#{api_version}/#{api_user}"
     end
 
     def defaults

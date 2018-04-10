@@ -1,5 +1,5 @@
-require 'paubox_ruby/version'
-require 'paubox_ruby/client'
+require 'paubox/version'
+require 'paubox/client'
 
 module Paubox
   class << self
