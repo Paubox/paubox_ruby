@@ -9,10 +9,10 @@ Gem::Specification.new do |spec|
   spec.authors       = ["Jonathan Greeley"]
   spec.email         = ["jon.r.greeley@gmail.com"]
 
-  spec.summary       = %q{TODO: Write a short summary, because Rubygems requires one.}
-  spec.description   = %q{TODO: Write a longer description or delete this line.}
-  spec.homepage      = "TODO: Put your gem's website or public repo URL here."
-  spec.license       = "MIT"
+  spec.summary       = %q{Paubox's Official Ruby SDK}
+  spec.description   = %q{Ruby SDK for interacting with the Paubox Transactional Email HTTP API.}
+  spec.homepage      = "https://www.paubox.com"
+  spec.license       = "Apache-2.0"
 
   # Prevent pushing this gem to RubyGems.org. To allow pushes either set the 'allowed_push_host'
   # to allow pushing to a single host or delete this section to allow pushing to any host.
