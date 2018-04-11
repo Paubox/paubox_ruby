@@ -1,5 +1,7 @@
 require "bundler/setup"
 require "paubox_ruby"
+require "webmock"
+require 'webmock/rspec'
 
 RSpec.configure do |config|
   # Enable flags like --only-failures and --next-failure

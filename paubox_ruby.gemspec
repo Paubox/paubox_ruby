@@ -6,7 +6,7 @@ require 'paubox/version'
 Gem::Specification.new do |spec|
   spec.name          = "paubox_ruby"
   spec.version       = Paubox::VERSION
-  spec.authors       = ["Jonathan Greeley"]
+  spec.authors       = ["Paubox", "Jonathan Greeley"]
   spec.email         = ["jon.r.greeley@gmail.com"]
 
   spec.summary       = %q{Paubox's Official Ruby SDK}
@@ -33,6 +33,7 @@ Gem::Specification.new do |spec|
   spec.add_development_dependency 'bundler', '~> 1.14'
   spec.add_development_dependency 'rake', '~> 10.0'
   spec.add_development_dependency 'rspec', '~> 3.2'
+  spec.add_development_dependency 'webmock', '~> 2.1'
 
   spec.add_dependency 'rest-client', '~> 2.0', '>= 2.0.2'
 end
