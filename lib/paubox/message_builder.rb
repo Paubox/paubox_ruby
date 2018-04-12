@@ -1,40 +1,64 @@
 module Paubox
   class MessageBuilder
-    attr_reader :args
+    require 'base64'
+    require 'mail'
+    attr_reader :mail
 
-    def initialize(args)
-      @args = args
+    def initialize(mail)
+      @mail = mail
     end
 
-    def render_message_payload
+    def message_payload
       msg = {}
-      msg['recipients'] = string_or_array_to_array(args[:to])
-      msg['recipients'] += string_or_array_to_array(args[:cc]) if args[:cc]
-      msg['bcc'] = string_or_array_to_array(args[:bcc])
-      msg['headers'] = build_headers(args)
-      msg['content'] = build_content(args)
-      msg['attachments'] = build_attachments(args)
+      msg['recipients'] = string_or_array_to_array(mail.to)
+      msg['recipients'] += string_or_array_to_array(mail.cc)
+      msg['bcc'] = string_or_array_to_array(mail.bcc)
+      msg['headers'] = build_headers
+      msg['content'] = build_content
+      # msg['attachments'] = build_attachments(mail)
       msg
     end
 
     def build_attachments
-      
+      attachments = mail.attachments
+      return [] if attachments.empty?
+      packaged_attachments = []
+      attachments.each do |attachment|
+        a = {}
+        case attachment
+        when Hash
+          a[:content] = attachment[:content]
+          a[:filename] = attachment[:filename]
+          a[:content_type] = attachment[:content_type]
+        when File
+          # to do 
+        else
+          next
+        end
+        a.map { |k, v| [ruby_to_json_key(k), v] }.to_h
+      end
     end
 
     def build_content
       content = {}
-      content['text/html'] = args[:html_body] if args['html_body']
-      content['text/plain'] = args[:text_body] if args['text_body']
+      if mail.multipart?
+        html_content = mail.html_part.body.to_s if mail.html_part
+        text_content = mail.text_part.body.to_s if mail.text_part
+        content['text/html'] = html_content unless html_content.empty?
+        content['text/plain'] = text_content unless text_content.empty?
+      else
+        content['text/plain'] = mail.body.to_s
+      end
       content
     end
 
     def build_headers
-      get_values_whitelist(:from, :reply_to, :subject)
+      %i(from reply_to subject).map { |k| [ruby_to_json_key(k), mail[k].to_s] }.to_h
+      # get_values_whitelist(:from, :reply_to, :subject)
     end
 
     def get_values_whitelist(*vals)
-      # binding.pry
-      vals.map { |k| next unless args[k]; [ruby_to_json_key(k), args[k]] }.to_h
+      vals.map { |k| next unless mail[k]; [ruby_to_json_key(k), mail[k]] }.to_h
     end
 
     def string_or_array_to_array(object)
@@ -52,9 +76,8 @@ module Paubox
     end
 
     def ruby_to_json_key(k)
-      { reply_to: 'reply-to',
-        html_body: 'text/html',
-        text_body: 'text/plain' }[k] || k.to_s
+      { reply_to: 'reply-to', html_body: 'text/html', text_body: 'text/plain',
+        filename: 'fileName', content_type: 'contentType' }[k] || k.to_s
     end
 
     def squish(s)

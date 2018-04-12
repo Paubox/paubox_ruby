@@ -18,6 +18,10 @@ module Paubox
       RestClient.get(url, {accept: :json})
     end
 
+    def deliver_mail(mail)
+      mb = MessageBuilder.new(mail)
+    end
+
     private
 
     def api_base_endpoint
