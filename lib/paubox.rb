@@ -1,5 +1,6 @@
 require 'paubox/version'
 require 'paubox/client'
+require 'paubox/message_builder'
 
 module Paubox
   class << self

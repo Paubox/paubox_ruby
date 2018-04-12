@@ -18,14 +18,14 @@ RSpec.describe Paubox::Client do
   describe '#api_base_endpoint' do
     it 'returns the correct URI' do
       client = Paubox::Client.new(api_key: 'test_key', api_user: 'tester')
-      expect(client.api_base_endpoint).to eq 'https://api.paubox.net/v1/tester'
+      expect(client.send(:api_base_endpoint)).to eq 'https://api.paubox.net/v1/tester'
     end
   end
 
   describe '#api_status' do
     it 'checks the API status' do
       client = Paubox::Client.new(api_key: 'test_key', api_user: 'paubox_api')
-      stub_request(:get, client.request_endpoint('status'))
+      stub_request(:get, client.send(:request_endpoint, 'status'))
       response = client.api_status
       expect(response.code).to eq 200
     end
