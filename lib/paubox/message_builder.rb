@@ -1,4 +1,6 @@
 module Paubox
+  # The MessageBuilder class takes a Ruby Mail object and attempts to parse it
+  # into a Hash formatted for the JSON payload of HTTP api request.
   class MessageBuilder
     require 'base64'
     require 'mail'
@@ -15,7 +17,7 @@ module Paubox
       msg['bcc'] = string_or_array_to_array(mail.bcc)
       msg['headers'] = build_headers
       msg['content'] = build_content
-      # msg['attachments'] = build_attachments(mail)
+      msg['attachments'] = build_attachments
       msg
     end
 
@@ -23,20 +25,12 @@ module Paubox
       attachments = mail.attachments
       return [] if attachments.empty?
       packaged_attachments = []
-      attachments.each do |attachment|
-        a = {}
-        case attachment
-        when Hash
-          a[:content] = attachment[:content]
-          a[:filename] = attachment[:filename]
-          a[:content_type] = attachment[:content_type]
-        when File
-          # to do 
-        else
-          next
-        end
-        a.map { |k, v| [ruby_to_json_key(k), v] }.to_h
+      attachments.each do |attch|
+        packaged_attachments << { 'content' => attch.body.encoded.to_s.chomp,
+                                  'fileName' => attch.filename,
+                                  'contentType' => attch.mime_type }
       end
+      packaged_attachments
     end
 
     def build_content
@@ -53,8 +47,8 @@ module Paubox
     end
 
     def build_headers
-      %i(from reply_to subject).map { |k| [ruby_to_json_key(k), mail[k].to_s] }.to_h
-      # get_values_whitelist(:from, :reply_to, :subject)
+      %i[from reply_to subject].map { |key| [ruby_to_json_key(key), mail[key].to_s] }
+                               .to_h
     end
 
     def get_values_whitelist(*vals)
@@ -66,22 +60,22 @@ module Paubox
       # Also removes whitespace from strings and empty elements from arrays.
       case object
       when String
-        a = object.split(',').map { |s| squish(s) }
+        a = object.split(',').map { |str| squish(str) }
       when Array
         a = object.map { |s| squish(s) }
       else
         return []
       end
-      a.reject { |s| s.empty? }
+      a.reject(&:empty?)
     end
 
-    def ruby_to_json_key(k)
+    def ruby_to_json_key(key)
       { reply_to: 'reply-to', html_body: 'text/html', text_body: 'text/plain',
-        filename: 'fileName', content_type: 'contentType' }[k] || k.to_s
+        filename: 'fileName', content_type: 'contentType' }[key] || key.to_s
     end
 
-    def squish(s)
-      s.to_s.split.join(' ')
+    def squish(str)
+      str.to_s.split.join(' ')
     end
   end
 end

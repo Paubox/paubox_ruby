@@ -1,5 +1,6 @@
 require 'spec_helper'
 require 'mail'
+require 'tempfile'
 
 RSpec.describe Paubox::MessageBuilder do
   def mail_defaults
@@ -31,6 +32,15 @@ RSpec.describe Paubox::MessageBuilder do
     end
     mail.text_part = text_part
     mail.html_part = html_part
+    mail
+  end
+
+  def message_with_attachments(args = {})
+    mail = multipart_message(args)
+    file = Tempfile.new(['test', '.csv'])
+    file.write('first, second')
+    file.close
+    mail.add_file(file.path)
     mail
   end
 
@@ -67,8 +77,14 @@ RSpec.describe Paubox::MessageBuilder do
       expect(content).to eq expected_content
     end
 
-    it 'extracts attachments' do
-      
+    it 'extracts attachments and keeps contents in base64 encoding' do
+      builder = Paubox::MessageBuilder.new(message_with_attachments)
+      attachments = builder.send(:build_attachments)
+      attachment = attachments.first
+      expect(Base64.decode64(attachment['content'])).to eq 'first, second'
+      expect(attachment['fileName'].include?('.csv')).to be true
+      expect(attachment['contentType']).to eq 'text/csv'
     end
   end
 end
+
