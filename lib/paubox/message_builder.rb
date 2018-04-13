@@ -2,8 +2,6 @@ module Paubox
   # The MessageBuilder class takes a Ruby Mail object and attempts to parse it
   # into a Hash formatted for the JSON payload of HTTP api request.
   class MessageBuilder
-    require 'base64'
-    require 'mail'
     attr_reader :mail
 
     def initialize(mail)

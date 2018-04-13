@@ -1,18 +1,18 @@
-# coding: utf-8
-lib = File.expand_path('../lib', __FILE__)
+lib = File.expand_path('lib', __dir__)
+
 $LOAD_PATH.unshift(lib) unless $LOAD_PATH.include?(lib)
 require 'paubox/version'
 
 Gem::Specification.new do |spec|
-  spec.name          = "paubox_ruby"
+  spec.name          = 'paubox_ruby'
   spec.version       = Paubox::VERSION
-  spec.authors       = ["Paubox", "Jonathan Greeley"]
-  spec.email         = ["jon.r.greeley@gmail.com"]
+  spec.authors       = ['Paubox', 'Jonathan Greeley']
+  spec.email         = ['jon.r.greeley@gmail.com']
 
-  spec.summary       = %q{Paubox's Official Ruby SDK}
-  spec.description   = %q{Ruby SDK for interacting with the Paubox Transactional Email HTTP API.}
-  spec.homepage      = "https://www.paubox.com"
-  spec.license       = "Apache-2.0"
+  spec.summary       = "Paubox's Official Ruby SDK"
+  spec.description   = "Ruby SDK for interacting with the Paubox Transactional Email HTTP API."
+  spec.homepage      = 'https://www.paubox.com'
+  spec.license       = 'Apache-2.0'
 
   # Prevent pushing this gem to RubyGems.org. To allow pushes either set the 'allowed_push_host'
   # to allow pushing to a single host or delete this section to allow pushing to any host.

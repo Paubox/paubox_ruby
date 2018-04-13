@@ -15,11 +15,13 @@ module Paubox
 
     def api_status
       url = request_endpoint('status')
-      RestClient.get(url, {accept: :json})
+      RestClient.get(url, accept: :json)
     end
 
     def deliver_mail(mail)
-      mb = MessageBuilder.new(mail)
+      payload = { data: { message: MessageBuilder.new(mail).message_payload } }.to_json
+      url = request_endpoint('messages')
+      RestClient.post(url, payload, accept: :json)
     end
 
     private
