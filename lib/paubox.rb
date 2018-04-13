@@ -1,6 +1,7 @@
 require 'paubox/version'
 require 'paubox/client'
 require 'paubox/mail_to_message'
+require 'paubox/message'
 require 'mail/paubox'
 
 module Paubox
