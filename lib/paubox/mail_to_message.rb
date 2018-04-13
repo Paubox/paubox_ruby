@@ -1,14 +1,18 @@
 module Paubox
-  # The MessageBuilder class takes a Ruby Mail object and attempts to parse it
+  # The MailToMessage class takes a Ruby Mail object and attempts to parse it
   # into a Hash formatted for the JSON payload of HTTP api request.
-  class MessageBuilder
+  class MailToMessage
     attr_reader :mail
 
     def initialize(mail)
       @mail = mail
     end
 
-    def message_payload
+    def send_message_payload
+      { data: { message: build_parts } }.to_json
+    end
+
+    def build_parts
       msg = {}
       msg['recipients'] = string_or_array_to_array(mail.to)
       msg['recipients'] += string_or_array_to_array(mail.cc)
