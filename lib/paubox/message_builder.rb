@@ -54,8 +54,6 @@ module Paubox
     end
 
     def string_or_array_to_array(object)
-      # Allows comma-separated multiple values in string.
-      # Also removes whitespace from strings and empty elements from arrays.
       case object
       when String
         a = object.split(',').map { |str| squish(str) }

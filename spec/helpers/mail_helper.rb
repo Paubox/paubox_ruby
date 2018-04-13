@@ -13,14 +13,9 @@ module Helpers
     def base_message(args = {})
       args = mail_defaults.merge(args)
       mail = Mail.new do
-        from 'me@test.paubox.net'
-        to 'you@test.paubox.net'
-        reply_to 'reply-to@test.paubox.net'
         delivery_method Mail::Paubox
-        subject 'Test subject' 
       end
-      # args.each { |k, v| mail[k] = v }
-      # mail['delivery_method'] = Mail::Paubox
+      args.each { |k, v| mail[k] = v }
       mail
     end
 
