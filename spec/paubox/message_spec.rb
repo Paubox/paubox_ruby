@@ -1,5 +1,6 @@
 require 'spec_helper'
 require './spec/helpers/message_helper'
+require 'tempfile'
 
 RSpec.configure do |c|
   c.include Helpers::MessageHelper
@@ -21,10 +22,27 @@ RSpec.describe Paubox::Message do
       expect(message.build_content).to eq expected_results
     end
 
-    it 'builds attachments' do
+    it 'adds attachments when instantiated' do
       message = Paubox::Message.new(message_with_attachment_args)
-      message.build_attachments
-      binding.pry
+      expect(message.attachments.length).to be 1
+    end
+
+    it 'adds additional attachments with #add_attachment' do
+      message = Paubox::Message.new(message_with_attachment_args)
+      file = Tempfile.new(['test', '.csv'])
+      file.write('first, second')
+      file.close
+      message.add_attachment(file.path)
+      expect(message.attachments.length).to be 2
+    end
+
+    it 'base64 encodes all attachment file contents' do
+      message = Paubox::Message.new(message_with_attachment_args)
+      file = Tempfile.new(['test', '.csv'])
+      file.write('first, second')
+      file.close
+      message.add_attachment(file.path)
+      expect(message.attachments.map { |a| base64_encoded?(a[:content]) }.uniq).to eq [true]
     end
   end
 end

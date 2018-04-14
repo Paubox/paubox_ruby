@@ -1,6 +1,5 @@
 require 'spec_helper'
 require 'mail'
-require 'tempfile'
 require './spec/helpers/mail_helper'
 
 RSpec.configure do |c|

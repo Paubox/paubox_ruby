@@ -1,5 +1,7 @@
 module Helpers
   module MessageHelper
+    require 'base64'
+
     def message_defaults
       { from: 'me@test.paubox.com',
         to: 'you@test.paubox.com, someone_else@test.paubox.com',
@@ -24,6 +26,11 @@ module Helpers
     def message_with_attachment_args(args = {})
       multipart_message_args({ attachments: [ filename: 'test.csv', content_type: 'text/csv',
                                               content: 'first, second ' ] }.merge(args))
+    end
+
+    def base64_encoded?(str)
+      encoded = Base64.encode64(str)
+      encoded == Base64.encode64(Base64.decode64(encoded))
     end
   end
 end

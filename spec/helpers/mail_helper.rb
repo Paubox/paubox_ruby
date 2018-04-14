@@ -2,6 +2,7 @@ module Helpers
   module MailHelper
     require 'base64'
     require 'mail'
+    require 'tempfile'
 
     def mail_defaults
       { 'from' => 'me@test.paubox.net',
