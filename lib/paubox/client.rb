@@ -30,11 +30,22 @@ module Paubox
         payload = Message.new(mail).send_message_payload
       end
       url = request_endpoint('messages')
-      RestClient.post(url, payload, accept: :json)
+      RestClient.post(url, payload, auth_header)
     end
     alias deliver_mail send_mail
 
+    def email_disposition(source_tracking_id)
+      url = "#{request_endpoint('message_receipt')}?sourceTrackingId=#{source_tracking_id}"
+      RestClient.get(url, auth_header)
+    end
+    alias message_receipt email_disposition
+
     private
+
+    def auth_header
+      { accept: :json,
+        :Authorization => "Token token=#{@api_key}" }
+    end
 
     def api_base_endpoint
       "#{api_protocol}#{api_host}/#{api_version}/#{api_user}"

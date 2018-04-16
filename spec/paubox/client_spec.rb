@@ -16,6 +16,15 @@ RSpec.describe Paubox::Client do
     end
   end
 
+  describe '#email_disposition' do
+    Paubox.configure do |config|
+      config.api_key = 'test_key'
+      config.api_user = 'test_user'
+    end
+    client = Paubox::Client.new(api_key: 'test_key', api_user: 'paubox_api')
+    binding.pry
+  end
+
   describe '#api_base_endpoint' do
     it 'returns the correct URI' do
       client = Paubox::Client.new
