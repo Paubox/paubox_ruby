@@ -4,7 +4,7 @@ $LOAD_PATH.unshift(lib) unless $LOAD_PATH.include?(lib)
 require 'paubox/version'
 
 Gem::Specification.new do |spec|
-  spec.name          = 'paubox_ruby'
+  spec.name          = 'paubox'
   spec.version       = Paubox::VERSION
   spec.authors       = ['Paubox', 'Jonathan Greeley']
   spec.email         = ['jon.r.greeley@gmail.com']
