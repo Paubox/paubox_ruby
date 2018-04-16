@@ -20,9 +20,9 @@ module Paubox
       return [] if attachments.empty?
       packaged_attachments = []
       attachments.each do |attch|
-        packaged_attachments << { 'content' => attch.body.encoded.to_s.chomp,
-                                  'fileName' => attch.filename,
-                                  'contentType' => attch.mime_type }
+        packaged_attachments << { content: attch.body.encoded.to_s.chomp,
+                                  file_name: attch.filename,
+                                  content_type: attch.mime_type }
       end
       packaged_attachments
     end
@@ -32,10 +32,10 @@ module Paubox
       if mail.multipart?
         html_content = mail.html_part.body.to_s if mail.html_part
         text_content = mail.text_part.body.to_s if mail.text_part
-        content['text/html'] = html_content unless html_content.empty?
-        content['text/plain'] = text_content unless text_content.empty?
+        content[:html_content] = html_content unless html_content.empty?
+        content[:text_content] = text_content unless text_content.empty?
       else
-        content['text/plain'] = mail.body.to_s
+        content[:text_content] = mail.body.to_s
       end
       content
     end
@@ -46,12 +46,12 @@ module Paubox
 
     def build_parts
       msg = {}
-      msg['recipients'] = string_or_array_to_array(mail.to)
-      msg['recipients'] += string_or_array_to_array(mail.cc)
-      msg['bcc'] = string_or_array_to_array(mail.bcc)
-      msg['headers'] = build_headers
-      msg['content'] = build_content
-      msg['attachments'] = build_attachments
+      msg[:recipients] = string_or_array_to_array(mail.to)
+      msg[:recipients] += string_or_array_to_array(mail.cc)
+      msg[:bcc] = string_or_array_to_array(mail.bcc)
+      msg[:headers] = build_headers
+      msg[:content] = build_content
+      msg[:attachments] = build_attachments
       msg
     end
   end

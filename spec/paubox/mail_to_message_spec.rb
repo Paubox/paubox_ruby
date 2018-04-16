@@ -21,24 +21,24 @@ RSpec.describe Paubox::MailToMessage do
     it 'extracts header fields' do
       builder = Paubox::MailToMessage.new(plain_text_message)
       headers = builder.send(:build_headers)
-      expected_headers = { 'from' => 'me@test.paubox.net',
-                           'reply-to' => 'reply-to@test.paubox.net',
-                           'subject'=>'Test subject' }
+      expected_headers = { from: 'me@test.paubox.net',
+                           reply_to: 'reply-to@test.paubox.net',
+                           subject: 'Test subject' }
       expect(headers).to eq expected_headers
     end
 
     it 'extracts non-multipart body' do
       builder = Paubox::MailToMessage.new(plain_text_message)
       content = builder.send(:build_content)
-      expected_content = { 'text/plain' => plain_text_message.body.to_s }
+      expected_content = { text_content: plain_text_message.body.to_s }
       expect(content).to eq expected_content
     end
 
     it 'extracts multipart html and text bodies' do
       builder = Paubox::MailToMessage.new(multipart_message)
       content = builder.send(:build_content)
-      expected_content = { 'text/html' => multipart_message.html_part.body.to_s,
-        'text/plain' => multipart_message.text_part.body.to_s }
+      expected_content = { html_content: multipart_message.html_part.body.to_s,
+        text_content: multipart_message.text_part.body.to_s }
       expect(content).to eq expected_content
     end
 
@@ -46,9 +46,9 @@ RSpec.describe Paubox::MailToMessage do
       builder = Paubox::MailToMessage.new(message_with_attachments)
       attachments = builder.send(:build_attachments)
       attachment = attachments.first
-      expect(Base64.decode64(attachment['content'])).to eq 'first, second'
-      expect(attachment['fileName'].include?('.csv')).to be true
-      expect(attachment['contentType']).to eq 'text/csv'
+      expect(Base64.decode64(attachment[:content])).to eq 'first, second'
+      expect(attachment[:file_name].include?('.csv')).to be true
+      expect(attachment[:content_type]).to eq 'text/csv'
     end
   end
 end

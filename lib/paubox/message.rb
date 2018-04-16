@@ -22,8 +22,6 @@ module Paubox
       { data: { message: convert_keys_to_json_version(build_parts) } }.to_json
     end
 
-    private
-
     def add_attachment(file_path)
       @packaged_attachments << { filename: file_path.split('/').last,
         content_type: `file --b --mime-type #{file_path}`.chomp,
@@ -38,9 +36,7 @@ module Paubox
       @attachments = build_attachments(args)
     end
 
-    def send_message_payload
-      { data: { message: build_parts } }.to_json
-    end
+    private
 
     def build_attachments(args)
       return (@packaged_attachments = []) if args.to_a.empty?
