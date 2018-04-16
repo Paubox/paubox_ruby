@@ -5,8 +5,9 @@ module Paubox
     include Paubox::FormatHelper
     attr_reader :mail
 
-    def initialize(mail)
+    def initialize(mail, args = {})
       @mail = mail
+      @allow_non_tls = args.fetch(:allow_non_tls, false)
     end
 
     def send_message_payload
@@ -49,6 +50,7 @@ module Paubox
       msg[:recipients] = string_or_array_to_array(mail.to)
       msg[:recipients] += string_or_array_to_array(mail.cc)
       msg[:bcc] = string_or_array_to_array(mail.bcc)
+      msg[:allow_non_tls] = @allow_non_tls
       msg[:headers] = build_headers
       msg[:content] = build_content
       msg[:attachments] = build_attachments

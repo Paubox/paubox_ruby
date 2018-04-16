@@ -21,14 +21,14 @@ module Paubox
       hash.each_pair do |key, val|
         converted[ruby_to_json_key(key)] = val.is_a?(Hash) ? convert_keys_to_json_version(val) : val
         next unless val.is_a?(Array)
-        v.each_with_index { |el, i| val[i] = convert_keys_to_json_version(el) if el.is_a?(Hash) }
+        val.each_with_index { |el, i| val[i] = convert_keys_to_json_version(el) if el.is_a?(Hash) }
       end
       converted
     end
 
     def ruby_to_json_key(key)
       { reply_to: 'reply-to', html_content: 'text/html', text_content: 'text/plain',
-        filename: 'fileName', content_type: 'contentType' }[key] || key.to_s
+        filename: 'fileName', content_type: 'contentType', allow_non_tls: 'allowNonTLS' }[key] || key.to_s
     end
 
     # def get_values_whitelist(*vals)

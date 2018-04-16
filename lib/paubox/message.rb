@@ -3,7 +3,7 @@ module Paubox
   class Message
     include Paubox::FormatHelper
     attr_accessor :from, :to, :cc, :bcc, :subject, :reply_to, :text_content,
-                  :html_content
+                  :html_content, :allow_non_tls
 
     def initialize(args)
       @from = args[:from]
@@ -16,6 +16,7 @@ module Paubox
       @html_content = args[:html_content]
       @packaged_attachments = []
       @attachments = build_attachments(args[:attachments])
+      @allow_non_tls = args.fetch(:allow_non_tls, false)
     end
 
     def send_message_payload
@@ -61,6 +62,7 @@ module Paubox
     def build_parts
       msg = {}
       msg[:recipients] = string_or_array_to_array(to) + string_or_array_to_array(cc)
+      msg[:allow_non_tls] = @allow_non_tls
       msg[:bcc] = string_or_array_to_array(bcc)
       msg[:headers] = build_headers
       msg[:content] = build_content

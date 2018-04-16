@@ -50,6 +50,18 @@ RSpec.describe Paubox::MailToMessage do
       expect(attachment[:file_name].include?('.csv')).to be true
       expect(attachment[:content_type]).to eq 'text/csv'
     end
+
+    it 'sets allow_non_tls attribute' do
+      payload = Paubox::MailToMessage.new(multipart_message, { allow_non_tls: true })
+                                     .send_message_payload
+      expect(JSON.parse(payload).dig('data', 'message', 'allowNonTLS')).to be true
+    end
+
+    it 'sets allow_non_tls to false default' do
+      payload = Paubox::MailToMessage.new(multipart_message)
+                                     .send_message_payload
+      expect(JSON.parse(payload).dig('data', 'message', 'allowNonTLS')).to be false
+    end
   end
 end
 
