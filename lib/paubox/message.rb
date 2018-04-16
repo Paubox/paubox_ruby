@@ -1,7 +1,7 @@
 module Paubox
+  # The Message class is for building a Paubox email message using a hash.
   class Message
-    require 'base64'
-
+    include Paubox::FormatHelper
     attr_accessor :from, :to, :cc, :bcc, :subject, :reply_to, :text_content,
                   :html_content
 
@@ -18,18 +18,24 @@ module Paubox
       @attachments = build_attachments(args[:attachments])
     end
 
+    def send_message_payload
+      { data: { message: convert_keys_to_json_version(build_parts) } }.to_json
+    end
+
+    private
+
     def add_attachment(file_path)
       @packaged_attachments << { filename: file_path.split('/').last,
         content_type: `file --b --mime-type #{file_path}`.chomp,
         content: Base64.encode64(File.read(file_path)) }
     end
 
-    def attachments=(args)
-      @attachments = build_attachments(args)
-    end
-
     def attachments
       @packaged_attachments
+    end
+
+    def attachments=(args)
+      @attachments = build_attachments(args)
     end
 
     def send_message_payload
@@ -37,7 +43,7 @@ module Paubox
     end
 
     def build_attachments(args)
-      return @packaged_attachments = [] if args.to_a.empty?
+      return (@packaged_attachments = []) if args.to_a.empty?
       args.each do |a|
         a[:content] =  base64_encode_if_needed(a[:content])
         @packaged_attachments << a
@@ -53,53 +59,17 @@ module Paubox
     end
 
     def build_headers
-      %i[from reply_to subject].map { |key| [key, self.send(key)] }
-                               .to_h
+      %i[from reply_to subject].map { |k| [k, self.send(k)] }.to_h
     end
 
     def build_parts
       msg = {}
-      msg['recipients'] = string_or_array_to_array(to) + string_or_array_to_array(cc)
-      msg['bcc'] = string_or_array_to_array(bcc)
-      msg['headers'] = build_headers
-      msg['content'] = build_content
-      msg['attachments'] = build_attachments
+      msg[:recipients] = string_or_array_to_array(to) + string_or_array_to_array(cc)
+      msg[:bcc] = string_or_array_to_array(bcc)
+      msg[:headers] = build_headers
+      msg[:content] = build_content
+      msg[:attachments] = attachments
       msg
-    end
-
-    def get_values_whitelist(*vals)
-      vals.map { |k| next unless mail[k]; [ruby_to_json_key(k), mail[k]] }.to_h
-    end
-
-    def string_or_array_to_array(object)
-      case object
-      when String
-        a = object.split(',').map { |str| squish(str) }
-      when Array
-        a = object.map { |s| squish(s) }
-      else
-        return []
-      end
-      a.reject(&:empty?)
-    end
-
-    # def ruby_to_json_key(key)
-    #   { reply_to: 'reply-to', html_body: 'text/html', text_body: 'text/plain',
-    #     filename: 'fileName', content_type: 'contentType' }[key] || key.to_s
-    # end
-
-    def base64_encode_if_needed(str)
-      return str if base64_encoded?(str.to_s)
-      Base64.encode64(str.to_s)
-    end
-
-    def base64_encoded?(str)
-      encoded = Base64.encode64(str)
-      encoded == Base64.encode64(Base64.decode64(encoded))
-    end
-
-    def squish(str)
-      str.to_s.split.join(' ')
     end
   end
 end

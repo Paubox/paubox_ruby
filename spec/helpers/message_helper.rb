@@ -1,7 +1,8 @@
 module Helpers
   module MessageHelper
     require 'base64'
-
+    BASE64_REGEX = Regexp.new(/^(?:[A-Za-z0-9+\/]{4}\n?)*(?:[A-Za-z0-9+\/]{2}==|[A-Za-z0-9+\/]{3}=)?$/)
+    
     def message_defaults
       { from: 'me@test.paubox.com',
         to: 'you@test.paubox.com, someone_else@test.paubox.com',
@@ -28,9 +29,9 @@ module Helpers
                                               content: 'first, second ' ] }.merge(args))
     end
 
-    def base64_encoded?(str)
-      encoded = Base64.encode64(str)
-      encoded == Base64.encode64(Base64.decode64(encoded))
+    def base64_encoded?(value)
+      return false unless value.is_a?(String)
+      !value.strip.match(BASE64_REGEX).nil?
     end
   end
 end

@@ -1,4 +1,5 @@
 module Paubox
+  # Client sends API requests to Paubox API
   class Client
     require 'rest-client'
     attr_reader :api_key, :api_user, :api_host, :api_protocol, :api_version
@@ -19,11 +20,17 @@ module Paubox
       RestClient.get(url, accept: :json)
     end
 
-    def deliver_mail(mail)
-      payload = MailToMessage.new(mail).send_message_payload
+    def send_mail(mail)
+      case mail
+      when Mail
+        payload = MailToMessage.new(mail).send_message_payload
+      when Hash
+        payload = Message.new(mail).send_message_payload
+      end
       url = request_endpoint('messages')
       RestClient.post(url, payload, accept: :json)
     end
+    alias deliver_mail send_mail
 
     private
 

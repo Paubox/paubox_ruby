@@ -44,5 +44,10 @@ RSpec.describe Paubox::Message do
       message.add_attachment(file.path)
       expect(message.attachments.map { |a| base64_encoded?(a[:content]) }.uniq).to eq [true]
     end
+
+    it 'remaps hash keys for JSON request' do
+      message = Paubox::Message.new(message_with_attachment_args)
+
+    end
   end
 end

@@ -2,6 +2,7 @@ module Paubox
   # The MailToMessage class takes a Ruby Mail object and attempts to parse it
   # into a Hash formatted for the JSON payload of HTTP api request.
   class MailToMessage
+    include Paubox::FormatHelper
     attr_reader :mail
 
     def initialize(mail)
@@ -9,19 +10,10 @@ module Paubox
     end
 
     def send_message_payload
-      { data: { message: build_parts } }.to_json
+      { data: { message: convert_keys_to_json_version(build_parts) } }.to_json
     end
 
-    def build_parts
-      msg = {}
-      msg['recipients'] = string_or_array_to_array(mail.to)
-      msg['recipients'] += string_or_array_to_array(mail.cc)
-      msg['bcc'] = string_or_array_to_array(mail.bcc)
-      msg['headers'] = build_headers
-      msg['content'] = build_content
-      msg['attachments'] = build_attachments
-      msg
-    end
+    private
 
     def build_attachments
       attachments = mail.attachments
@@ -49,33 +41,18 @@ module Paubox
     end
 
     def build_headers
-      %i[from reply_to subject].map { |key| [ruby_to_json_key(key), mail[key].to_s] }
-                               .to_h
+      %i[from reply_to subject].map { |k| [k, mail[k].to_s] }.to_h
     end
 
-    def get_values_whitelist(*vals)
-      vals.map { |k| next unless mail[k]; [ruby_to_json_key(k), mail[k]] }.to_h
-    end
-
-    def string_or_array_to_array(object)
-      case object
-      when String
-        a = object.split(',').map { |str| squish(str) }
-      when Array
-        a = object.map { |s| squish(s) }
-      else
-        return []
-      end
-      a.reject(&:empty?)
-    end
-
-    def ruby_to_json_key(key)
-      { reply_to: 'reply-to', html_body: 'text/html', text_body: 'text/plain',
-        filename: 'fileName', content_type: 'contentType' }[key] || key.to_s
-    end
-
-    def squish(str)
-      str.to_s.split.join(' ')
+    def build_parts
+      msg = {}
+      msg['recipients'] = string_or_array_to_array(mail.to)
+      msg['recipients'] += string_or_array_to_array(mail.cc)
+      msg['bcc'] = string_or_array_to_array(mail.bcc)
+      msg['headers'] = build_headers
+      msg['content'] = build_content
+      msg['attachments'] = build_attachments
+      msg
     end
   end
 end
