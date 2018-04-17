@@ -1,5 +1,5 @@
 # Paubox Gem
-This is the official Ruby wrapper for the Paubox Transactional Email HTTP API. The Paubox Transactional Email API allows your application to send secure, HIPAA-compliant email and track deliveries and opens.
+This is the official Ruby wrapper for the Paubox Transactional Email HTTP API. The Paubox Transactional Email API allows your application to send secure, HIPAA-compliant email and track deliveries and opens. This gem is currently in pre-alpha development.
 
 ## Installation
 
