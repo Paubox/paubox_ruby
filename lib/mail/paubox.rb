@@ -8,22 +8,12 @@ module Mail
 
     def deliver!(mail)
       client = ::Paubox::Client.new(settings)
-      client.send_mail(mail)
+      response = client.send_mail(mail)
+      puts response
     end
   end
+
+  class Message
+    attr_accessor :source_tracking_id, :status
+  end
 end
-
-# message = Mail.new do
-#   from            'testing@paubox.com'
-#   to              'jonathan@paubox.com'
-#   subject         'Testing'
-#
-#   content_type    'text/html; charset=UTF-8'
-#   body            '<p>Hello world</p>'
-#
-#
-#   delivery_method Mail::Paubox
-# end
-
-
-# { from: 'me@test.paubox.com', to: 'jonathan@paubox.com', subject: 'Test subject', text_content: 'hello world' }

@@ -4,6 +4,7 @@ module Paubox
   class MailToMessage
     include Paubox::FormatHelper
     attr_reader :mail
+    require 'tempfile'
 
     def initialize(mail, args = {})
       @mail = mail
@@ -21,7 +22,7 @@ module Paubox
       return [] if attachments.empty?
       packaged_attachments = []
       attachments.each do |attch|
-        packaged_attachments << { content: attch.body.encoded.to_s.chomp,
+        packaged_attachments << { content: convert_binary_to_base64(attch.body.decoded),
                                   file_name: attch.filename,
                                   content_type: attch.mime_type }
       end
@@ -55,6 +56,13 @@ module Paubox
       msg[:content] = build_content
       msg[:attachments] = build_attachments
       msg
+    end
+
+    def convert_binary_to_base64(f)
+      file = Tempfile.new(encoding: 'ascii-8bit')
+      file.write(f)
+      file.rewind
+      Base64.encode64(file.read)
     end
   end
 end

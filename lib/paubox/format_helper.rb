@@ -28,7 +28,8 @@ module Paubox
 
     def ruby_to_json_key(key)
       { reply_to: 'reply-to', html_content: 'text/html', text_content: 'text/plain',
-        filename: 'fileName', content_type: 'contentType', allow_non_tls: 'allowNonTLS' }[key] || key.to_s
+        filename: 'fileName', file_name: 'fileName', content_type: 'contentType',
+        allow_non_tls: 'allowNonTLS' }[key] || key.to_s
     end
 
     # def get_values_whitelist(*vals)
