@@ -23,20 +23,22 @@ module Paubox
 
     def send_mail(mail)
       case mail
-      when Mail
+      when Mail::Message
         payload = MailToMessage.new(mail, { allow_non_tls: @allow_non_tls })
                                .send_message_payload
       when Hash
         payload = Message.new(mail).send_message_payload
       end
       url = request_endpoint('messages')
-      RestClient.post(url, payload, auth_header)
+      response = RestClient.post(url, payload, auth_header)
+      JSON.parse(response.body)
     end
     alias deliver_mail send_mail
 
     def email_disposition(source_tracking_id)
       url = "#{request_endpoint('message_receipt')}?sourceTrackingId=#{source_tracking_id}"
-      RestClient.get(url, auth_header)
+      response = RestClient.get(url, auth_header)
+      JSON.parse(response.body)
     end
     alias message_receipt email_disposition
 
@@ -44,6 +46,7 @@ module Paubox
 
     def auth_header
       { accept: :json,
+        content_type: :json,
         :Authorization => "Token token=#{@api_key}" }
     end
 
