@@ -14,6 +14,6 @@ module Mail
   end
 
   class Message
-    attr_accessor :source_tracking_id, :status
+    attr_accessor :source_tracking_id, :status, :allow_non_tls
   end
 end
