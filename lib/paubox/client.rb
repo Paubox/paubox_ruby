@@ -41,7 +41,7 @@ module Paubox
     def email_disposition(source_tracking_id)
       url = "#{request_endpoint('message_receipt')}?sourceTrackingId=#{source_tracking_id}"
       response = RestClient.get(url, auth_header)
-      JSON.parse(response.body)
+      to_open_struct(JSON.parse(response.body))
     end
     alias message_receipt email_disposition
 
@@ -68,6 +68,13 @@ module Paubox
         api_protocol: 'https://',
         api_version: 'v1',
         test_mode: false }
+    end
+
+    # recursively converts a nested Hash into OpenStruct
+    def to_open_struct(hash)
+      OpenStruct.new(hash.each_with_object({}) do |(key, val), memo|
+        memo[key] = val.is_a?(Hash) ? to_ostruct(val) : val
+      end)
     end
   end
 end

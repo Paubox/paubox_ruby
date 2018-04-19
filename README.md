@@ -25,19 +25,20 @@ Or install it yourself as:
 You will need to have a Paubox account. Please contact [Paubox Customer Success](https://paubox.zendesk.com/hc/en-us) for details on gaining access to the Transactional Email API alpha testing program.
 
 ### Configuring API Credentials
-To set your API credentials you'll need to include these in an initializer (config/initializers/paubox.rb in Rails).
+Include your API credentials in an initializer (e.g. config/initializers/paubox.rb in Rails).
 
-Be careful not to commit your API credentials to version control. It's best to store these in environmental variables.
+Keep your API credentials out of version control. Store these in environmental variables.
 
 	Paubox.configure do |config|
      config.api_key = ENV['PAUBOX_API_KEY']
      config.api_user = ENV['PAUBOX_API_USER']
     end
 
+## Usage
 
 ### Sending Messages with the Ruby Mail Library
 
-If you're already using the Ruby Mail Library, sending via Paubox is easy. Just build your message as normal and set Mail::Paubox as the delivery method.
+Using the Ruby Mail Library? Sending via Paubox is easy. Just build a message as normal and set Mail::Paubox as the delivery method.
 
 	message = Mail.new do
       from            'you@yourdomain.com'
