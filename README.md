@@ -63,9 +63,9 @@ Using the Ruby Mail Library? Sending via Paubox is easy. Just build a message as
     message.source_tracking_id
     => "2a3c048485aa4cf6"
 
-### Sending Messages without ensuring TLS
+### Allowing non-TLS message delivery
 
-If you want to send non-PHI mail that does not need to be HIPAA-compliant, you can allow the message delivery to take place even if a TLS connection is unavailable.
+If you want to send non-PHI mail that does not need to be HIPAA-compliant, you can allow the message delivery to take place even if a TLS connection is unavailable. This means a message will not be converted into a secure portal message when a non-TLS connection is encountered.
 
 	message = Mail.new do
       from            'you@yourdomain.com'
@@ -80,17 +80,18 @@ If you want to send non-PHI mail that does not need to be HIPAA-compliant, you c
     message.deliver!
 
 ### Sending Messages using just the Paubox API
+You don't need to use Ruby Mail to build and send messages with Paubox.
 	
 	args = { from: 'you@yourdomain.com',
-	         to: 'someone@domain.com, someone_else@domain.com',
-             cc: ['another@domain.com', 'yetanother@domain.com'],
+	         to: 'someone@domain.com, someone-else@domain.com',
+             cc: ['another@domain.com', 'yet-another@domain.com'],
              bcc: 'bcc-recipient@domain.com',
              reply_to: 'reply-to@yourdomain.com',
              subject: 'Testing!',
              text_content: 'Hello World!',
              html_content: '<h1>Hello World!</h1>' }
              
-	message = Message.new(args)
+	message = Paubox::Message.new(args)
 	
 	client = Paubox::Client.new
 	client.deliver_mail(message)

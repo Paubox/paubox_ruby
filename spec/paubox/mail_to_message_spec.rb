@@ -42,6 +42,14 @@ RSpec.describe Paubox::MailToMessage do
       expect(content).to eq expected_content
     end
 
+    it 'sets multipart html to html_content in html-only message' do
+      builder = Paubox::MailToMessage.new(html_only_message)
+      content = JSON.parse(builder.send(:send_message_payload))
+      expected_content = { html_content: multipart_message.html_part.body.to_s }
+      expect(content.dig('data', 'message', 'content', 'text/html')).to eq expected_content[:html_content]
+      expect(content['text_content'].nil?).to be true
+    end
+
     it 'extracts attachments and keeps contents in base64 encoding' do
       builder = Paubox::MailToMessage.new(message_with_attachments)
       attachments = builder.send(:build_attachments)

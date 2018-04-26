@@ -2,6 +2,7 @@ module Paubox
   # Client sends API requests to Paubox API
   class Client
     require 'rest-client'
+    require 'ostruct'
     attr_reader :api_key, :api_user, :api_host, :api_protocol, :api_version
 
     def initialize(args = {})
@@ -73,7 +74,7 @@ module Paubox
     # recursively converts a nested Hash into OpenStruct
     def to_open_struct(hash)
       OpenStruct.new(hash.each_with_object({}) do |(key, val), memo|
-        memo[key] = val.is_a?(Hash) ? to_ostruct(val) : val
+        memo[key] = val.is_a?(Hash) ? to_open_struct(val) : val
       end)
     end
   end

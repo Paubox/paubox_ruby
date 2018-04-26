@@ -34,8 +34,10 @@ module Paubox
       if mail.multipart?
         html_content = mail.html_part.body.to_s if mail.html_part
         text_content = mail.text_part.body.to_s if mail.text_part
-        content[:html_content] = html_content unless html_content.empty?
-        content[:text_content] = text_content unless text_content.empty?
+        content[:html_content] = html_content unless html_content.nil?
+        content[:text_content] = text_content unless text_content.nil?
+      elsif mail.content_type.include? 'text/html'
+        content[:html_content] = mail.body.to_s
       else
         content[:text_content] = mail.body.to_s
       end

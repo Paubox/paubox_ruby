@@ -24,6 +24,16 @@ module Helpers
       base_message({'body' => 'Test plain text body.'}.merge(args))
     end
 
+    def html_only_message(args = {})
+      mail = base_message(args)
+      html_part = Mail::Part.new do
+        content_type 'text/html; charset=UTF-8'
+        body '<h1>Test HTML</h1>'
+      end
+      mail.html_part = html_part
+      mail
+    end
+
     def multipart_message(args = {})
       mail = base_message(args)
       text_part = Mail::Part.new do
