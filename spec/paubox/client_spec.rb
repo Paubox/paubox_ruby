@@ -22,7 +22,6 @@ RSpec.describe Paubox::Client do
       config.api_user = 'test_user'
     end
     client = Paubox::Client.new(api_key: 'test_key', api_user: 'paubox_api')
-    binding.pry
   end
 
   describe '#api_base_endpoint' do
