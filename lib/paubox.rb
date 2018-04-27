@@ -3,6 +3,7 @@ require 'paubox/client'
 require 'paubox/format_helper'
 require 'paubox/mail_to_message'
 require 'paubox/message'
+require 'paubox/email_disposition'
 require 'mail/paubox'
 
 module Paubox
