@@ -28,4 +28,34 @@ RSpec.describe Paubox::EmailDisposition do
     expect(dates.length.zero?).to be false
     expect(dates.select { |d| !d.is_a? DateTime }.empty?).to be true
   end
+
+  it 'gets the message_id' do
+    response = JSON.parse(single_recipient_delivered)
+    disposition = Paubox::EmailDisposition.new(response)
+    expect(disposition.message_id.is_a? String).to be true
+    expect(disposition.message_id.length.zero?).to be false
+  end
+
+  it 'gets the source_tracking_id' do
+    response = JSON.parse(single_recipient_delivered)
+    disposition = Paubox::EmailDisposition.new(response)
+    expect(disposition.source_tracking_id.is_a? String).to be true
+    expect(disposition.source_tracking_id.length.zero?).to be false
+  end
+
+  it 'handles error response' do
+    response = JSON.parse(error_invalid_access_token)
+    disposition = Paubox::EmailDisposition.new(response)
+    expect(disposition.has_errors?).to be true
+  end 
+
+  it 'returns an array of structs for errors' do
+    response = JSON.parse(error_message_not_found)
+    disposition = Paubox::EmailDisposition.new(response)
+    expect(disposition.errors.is_a? Array).to be true
+    expect(disposition.errors.first.code).to eq 404
+    expect(disposition.errors.first.status).to eq 'message_not_found'
+    expect(disposition.errors.first.title).to eq 'Message was not found'
+    expect(disposition.errors.first.details).to eq 'Message with this tracking id was not found'
+  end 
 end

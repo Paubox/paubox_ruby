@@ -1,22 +1,37 @@
 module Paubox
   class EmailDisposition
     require 'time'
-    attr_reader :response, :message_id, :message_deliveries
+    attr_reader :response, :raw_json_response, :source_tracking_id, :message_id,
+                :message_deliveries, :errors
     MessageDelivery = Struct.new(:recipient, :status)
     MessageDeliveryStatus = Struct.new(:delivery_status, :delivery_time,
                                        :opened_status, :opened_time)
     MessageMultiDeliveryStatus = Struct.new(:delivery_status, :delivery_time)
+    ResponseError = Struct.new(:code, :status, :title, :details)
 
     def initialize(response)
       @response = response
+      @source_tracking_id = response.dig('sourceTrackingId')
       @message_data = response.dig('data', 'message')
+      @message_id = @message_data ? @message_data['id'] : nil
       @message_deliveries ||= build_message_deliveries
-      @message_id = @message_data['id']
+      @errors ||= build_errors
+    end
+
+    def has_errors?
+      errors.any?
+    end
+
+    def build_errors
+      return [] unless response['errors']
+      errors = response['errors']
+      errors.map { |e| ResponseError.new(e['code'], e['status'], e['title'], e['details']) }
     end
 
     private
 
     def build_message_deliveries
+      return [] unless @message_data
       deliveries = @message_data.fetch('message_deliveries', [])
       deliveries.map do |delivery|
         status = build_message_delivery_status(delivery['status'])
@@ -35,6 +50,10 @@ module Paubox
 
     def multi_recipient?
       @message_data.fetch('message_deliveries', []).length > 1
+    end
+
+    def raw_json_response
+      response.to_json
     end
   end
 end

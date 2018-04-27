@@ -42,7 +42,8 @@ module Paubox
     def email_disposition(source_tracking_id)
       url = "#{request_endpoint('message_receipt')}?sourceTrackingId=#{source_tracking_id}"
       response = RestClient.get(url, auth_header)
-      to_open_struct(JSON.parse(response.body))
+      # binding.pry
+      JSON.parse(response.body)
     end
     alias message_receipt email_disposition
 
