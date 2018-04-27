@@ -10,19 +10,19 @@ module Paubox
     def initialize(response)
       @response = response
       @message_data = response.dig('data', 'message')
-      @message_deliveries ||= message_deliveries
+      @message_deliveries ||= build_message_deliveries
       @message_id = @message_data['id']
     end
 
-    def message_deliveries
+    private
+
+    def build_message_deliveries
       deliveries = @message_data.fetch('message_deliveries', [])
       deliveries.map do |delivery|
         status = build_message_delivery_status(delivery['status'])
         MessageDelivery.new(delivery['recipient'], status)
       end
     end
-
-    private
 
     def build_message_delivery_status(stat)
       delivery_status = stat['deliveryStatus']
