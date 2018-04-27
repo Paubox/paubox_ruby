@@ -1,4 +1,5 @@
 module Paubox
+  # Parses email dispositions from /v1/message_reciept response to friendly Ruby
   class EmailDisposition
     require 'time'
     attr_reader :response, :raw_json_response, :source_tracking_id, :message_id,
@@ -11,6 +12,7 @@ module Paubox
 
     def initialize(response)
       @response = response
+      @raw_json_response = response.to_json
       @source_tracking_id = response.dig('sourceTrackingId')
       @message_data = response.dig('data', 'message')
       @message_id = @message_data ? @message_data['id'] : nil
@@ -18,7 +20,7 @@ module Paubox
       @errors ||= build_errors
     end
 
-    def has_errors?
+    def errors?
       errors.any?
     end
 
@@ -50,10 +52,6 @@ module Paubox
 
     def multi_recipient?
       @message_data.fetch('message_deliveries', []).length > 1
-    end
-
-    def raw_json_response
-      response.to_json
     end
   end
 end

@@ -39,4 +39,13 @@ RSpec.describe Paubox::Client do
       expect(response.code).to eq 200
     end
   end
+
+  describe '#email_disposition' do
+    it 'checks the API status' do
+      client = Paubox::Client.new(api_key: 'test_key', api_user: 'paubox_api')
+      stub_request(:get, client.send(:request_endpoint, 'status'))
+      response = client.api_status
+      expect(response.code).to eq 200
+    end
+  end
 end
