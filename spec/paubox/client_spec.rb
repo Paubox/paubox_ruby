@@ -1,4 +1,9 @@
 require "spec_helper"
+require './spec/helpers/email_disposition_helper'
+
+RSpec.configure do |c|
+  c.include Helpers::EmailDispositionHelper
+end
 
 RSpec.describe Paubox::Client do
   describe '#initialize' do
@@ -16,14 +21,6 @@ RSpec.describe Paubox::Client do
     end
   end
 
-  describe '#email_disposition' do
-    Paubox.configure do |config|
-      config.api_key = 'test_key'
-      config.api_user = 'test_user'
-    end
-    client = Paubox::Client.new(api_key: 'test_key', api_user: 'paubox_api')
-  end
-
   describe '#api_base_endpoint' do
     it 'returns the correct URI' do
       client = Paubox::Client.new
@@ -32,15 +29,6 @@ RSpec.describe Paubox::Client do
   end
 
   describe '#api_status' do
-    it 'checks the API status' do
-      client = Paubox::Client.new(api_key: 'test_key', api_user: 'paubox_api')
-      stub_request(:get, client.send(:request_endpoint, 'status'))
-      response = client.api_status
-      expect(response.code).to eq 200
-    end
-  end
-
-  describe '#email_disposition' do
     it 'checks the API status' do
       client = Paubox::Client.new(api_key: 'test_key', api_user: 'paubox_api')
       stub_request(:get, client.send(:request_endpoint, 'status'))

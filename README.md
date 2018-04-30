@@ -97,6 +97,37 @@ You don't need to use Ruby Mail to build and send messages with Paubox.
 	client.deliver_mail(message)
 	=> {"message"=>"Service OK", "sourceTrackingId"=>"2a3c048485aa4cf6"}
 
+### Checking Email Dispositions
+
+	client = Paubox::Client.new
+	email_disposition = client.email_disposition('2a3c048485aa4cf6')
+	
+	# Get array of email_dispositions. One email_disposition is generated for each recipient.
+	message_deliveries = email_disposition.message_deliveries
+	=> [<struct Paubox::EmailDisposition::MessageDelivery recipient="test@domain.com", status=#<struct Paubox::EmailDisposition::MessageDeliveryStatus delivery_status="delivered", delivery_time=Mon, 30 Apr 2018 12:54:19 -0700, opened_status="opened", opened_time=Mon, 30 Apr 2018 12:55:19 -0700>>]
+	
+	# Inspect a message delivery
+	delivery = message_deliveries.first
+	
+	delivery.recipient
+	=> "test@domain.com"
+	
+	# Inspect the message delivery status
+	status = delivery.status
+	
+	status.delivery_status
+	=> "delivered"
+	
+	status.delivery_time
+	=> Mon, 30 Apr 2018 12:54:19 -0700
+	
+	# opened_status is only available for single-recipient messages
+	status.opened_status
+	=> "opened"
+	
+	# opened_time is only available for single-recipient messages
+	status.opened_time
+	=> Mon, 30 Apr 2018 12:55:19 -0700
 	
 
 
