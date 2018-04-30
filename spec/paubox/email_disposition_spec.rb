@@ -46,16 +46,16 @@ RSpec.describe Paubox::EmailDisposition do
   it 'handles error response' do
     response = JSON.parse(error_invalid_access_token)
     disposition = Paubox::EmailDisposition.new(response)
-    expect(disposition.has_errors?).to be true
+    expect(disposition.errors?).to be true
   end 
 
   it 'returns an array of structs for errors' do
     response = JSON.parse(error_message_not_found)
     disposition = Paubox::EmailDisposition.new(response)
     expect(disposition.errors.is_a? Array).to be true
-    expect(disposition.errors.first.code).to eq 404
-    expect(disposition.errors.first.status).to eq 'message_not_found'
-    expect(disposition.errors.first.title).to eq 'Message was not found'
-    expect(disposition.errors.first.details).to eq 'Message with this tracking id was not found'
+    error = disposition.errors.first
+    expect(error.code).to eq 404
+    expect(error.title).to eq 'Message was not found'
+    expect(error.details).to eq 'Message with this tracking id was not found'
   end 
 end
