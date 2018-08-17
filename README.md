@@ -1,3 +1,5 @@
+<img src="https://github.com/Paubox/paubox-csharp/raw/master/paubox_logo.png" alt="Paubox" width="150px">
+
 # Paubox Gem
 This gem and Paubox Transactional Email HTTP API are currently in alpha development.
 
@@ -5,6 +7,14 @@ This is the official Ruby wrapper for the Paubox Transactional Email HTTP API. T
 
 It extends the [Ruby Mail Library](https://github.com/mikel/mail) for seamless integration in your existing Ruby application. The API wrapper also allows you to construct and send messages directly without the Ruby Mail Library.
 
+# Table of Contents
+* [Installation](#installation)
+*  [Usage](#usage)
+*  [Contributing](#contributing)
+*  [License](#license)
+
+
+<a name="#installation"></a>
 ## Installation
 
 Add this line to your application's Gemfile:
@@ -35,6 +45,7 @@ Paubox.configure do |config|
 end
 ```
 
+<a name="#usage"></a>
 ## Usage
 
 ### Sending Messages with the Ruby Mail Library
@@ -134,12 +145,13 @@ status.opened_time
 => Mon, 30 Apr 2018 12:55:19 -0700
 ```
 
-
+<a name="#contributing"></a>
 ## Contributing
 
 Bug reports and pull requests are welcome on GitHub at https://github.com/paubox/paubox_ruby.
 
 
+<a name="#license"></a>
 ## License
 
 Licensed under the Apache License, Version 2.0 (the "License");
