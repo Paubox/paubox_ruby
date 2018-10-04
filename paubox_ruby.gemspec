@@ -27,6 +27,6 @@ Gem::Specification.new do |spec|
   spec.add_development_dependency 'webmock', '~> 2.1'
   spec.add_development_dependency 'pry'
 
-  spec.add_dependency 'mail', '>= 2.6'
+  spec.add_dependency 'mail', '>= 2.5'
   spec.add_dependency 'rest-client', '~> 2.0', '>= 2.0.2'
 end
