@@ -61,6 +61,11 @@ RSpec.describe Paubox::Message do
       expect(message.send(:build_force_secure_notification)).to eq expected_results
     end
 
+    it 'build parts sets cc' do
+      message = Paubox::Message.new(message_with_attachment_args)      
+      expect(message.send(:build_parts)[:cc]).to eq ["first@test.paubox.com", "second@paubox.com"]
+    end
+
     # it 'remaps hash keys for JSON request' do
     #   message = Paubox::Message.new(message_with_attachment_args)
     # end

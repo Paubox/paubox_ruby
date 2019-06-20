@@ -9,6 +9,7 @@ module Helpers
     def mail_defaults
       { 'from' => 'me@test.paubox.net',
         'to' => 'you@test.paubox.net',
+        'cc' => 'cc@test.paubox.net',
         'reply_to' => 'reply-to@test.paubox.net',
         'subject' => 'Test subject' }
     end

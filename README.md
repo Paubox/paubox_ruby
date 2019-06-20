@@ -57,6 +57,7 @@ Using the Ruby Mail Library? Sending via Paubox is easy. Just build a message as
 message = Mail.new do
   from            'you@yourdomain.com'
   to              'someone@somewhere.com'
+  cc              'another@somewhere.com'
   subject         'HIPAA-compliant email made easy'
 
   text_part do

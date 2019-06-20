@@ -71,7 +71,7 @@ module Paubox
     def build_parts
       msg = {}
       msg[:recipients] = string_or_array_to_array(mail.to)
-      msg[:recipients] += string_or_array_to_array(mail.cc)
+      msg[:cc] = string_or_array_to_array(mail.cc)
       msg[:bcc] = string_or_array_to_array(mail.bcc)
       msg[:allow_non_tls] = @allow_non_tls
       @force_secure_notification = build_force_secure_notification

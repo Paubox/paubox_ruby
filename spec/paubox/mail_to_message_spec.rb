@@ -108,5 +108,12 @@ RSpec.describe Paubox::MailToMessage do
                                      .send_message_payload
       expect(JSON.parse(payload).dig('data', 'message', 'forceSecureNotification')).to be nil
     end
+
+    it 'set and extract cc field' do
+      builder = Paubox::MailToMessage.new(message_with_attachments)
+      content = builder.send(:build_parts)
+      expected_content = ['cc@test.paubox.net']
+      expect(content[:cc]).to eq expected_content
+    end
   end
 end

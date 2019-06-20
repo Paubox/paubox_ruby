@@ -15,7 +15,7 @@ module Paubox
       @api_protocol = args[:api_protocol]
       @api_version = args[:api_version]
       @test_mode = args[:test_mode]
-      @api_base_endpoint = api_base_endpoint      
+      @api_base_endpoint = api_base_endpoint
     end
 
     def api_status
@@ -25,9 +25,9 @@ module Paubox
 
     def send_mail(mail)
       case mail
-      when Mail::Message        
+      when Mail::Message
         allow_non_tls = mail.allow_non_tls.nil? ? false : mail.allow_non_tls
-        payload = MailToMessage.new(mail, { allow_non_tls: allow_non_tls })
+        payload = MailToMessage.new(mail, allow_non_tls: allow_non_tls)
                                .send_message_payload
       when Hash
         payload = Message.new(mail).send_message_payload
