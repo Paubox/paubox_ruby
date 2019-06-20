@@ -95,6 +95,26 @@ message.allow_non_tls = true
 message.deliver!
 ```
 
+### Forcing Secure Notifications
+
+Paubox Secure Notifications allow an extra layer of security, especially when coupled with an organization's requirement for message recipients to use 2-factor authentication to read messages (this setting is available to org administrators in the Paubox Admin Panel).
+
+Instead of receiving an email with the message contents, the recipient will receive a notification email that they have a new message in Paubox.
+```ruby
+message = Mail.new do
+  from            'you@yourdomain.com'
+  to              'someone@somewhere.com'
+  subject         'Sending non-PHI'
+  body            'This message delivery will not enforce TLS transmission.'
+
+  delivery_method Mail::Paubox
+end
+
+message.force_secure_notification = 'true'
+message.deliver!
+```
+
+
 ### Sending Messages using just the Paubox API
 You don't need to use Ruby Mail to build and send messages with Paubox.
 ```ruby
@@ -105,7 +125,8 @@ args = { from: 'you@yourdomain.com',
          reply_to: 'reply-to@yourdomain.com',
          subject: 'Testing!',
          text_content: 'Hello World!',
-         html_content: '<h1>Hello World!</h1>' }
+         html_content: '<h1>Hello World!</h1>'         
+      }
 
 message = Paubox::Message.new(args)
 
