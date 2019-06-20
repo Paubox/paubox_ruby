@@ -58,7 +58,7 @@ RSpec.describe Paubox::MailToMessage do
       expect(attachment[:file_name].include?('.csv')).to be true
       expect(attachment[:content_type]).to eq 'text/csv'
     end
-
+    
     it 'sets allow_non_tls attribute' do
       payload = Paubox::MailToMessage.new(multipart_message, { allow_non_tls: true })
                                      .send_message_payload
@@ -70,6 +70,37 @@ RSpec.describe Paubox::MailToMessage do
                                      .send_message_payload
       expect(JSON.parse(payload).dig('data', 'message', 'allowNonTLS')).to be false
     end
+
+    it 'sets force_secure_notification attribute to false' do
+      payload = Paubox::MailToMessage.new(multipart_message, { force_secure_notification: "false" })
+                                     .send_message_payload
+      expect(JSON.parse(payload).dig('data', 'message', 'forceSecureNotification')).to be false
+    end
+
+    it 'sets force_secure_notification attribute to true' do
+      payload = Paubox::MailToMessage.new(multipart_message, { force_secure_notification: "true" })
+                                     .send_message_payload
+      expect(JSON.parse(payload).dig('data', 'message', 'forceSecureNotification')).to be true
+    end
+
+    it 'sets force_secure_notification attribute to nil default' do
+      payload = Paubox::MailToMessage.new(multipart_message)
+                                     .send_message_payload      
+      expect(JSON.parse(payload).dig('data', 'message', 'forceSecureNotification')).to be nil
+    end
+
+    it 'sets force_secure_notification attribute to empty' do
+      payload = Paubox::MailToMessage.new(multipart_message, { force_secure_notification: "" })
+                                     .send_message_payload      
+      expect(JSON.parse(payload).dig('data', 'message', 'forceSecureNotification')).to be nil
+    end
+
+    it 'sets force_secure_notification attribute to boolean value' do
+      payload = Paubox::MailToMessage.new(multipart_message, { force_secure_notification: true })
+                                     .send_message_payload      
+      expect(JSON.parse(payload).dig('data', 'message', 'forceSecureNotification')).to be nil
+    end
+
   end
 end
 

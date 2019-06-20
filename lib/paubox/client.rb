@@ -14,7 +14,7 @@ module Paubox
       @api_version = args[:api_version]
       @test_mode = args[:test_mode]
       @api_base_endpoint = api_base_endpoint
-      @allow_non_tls = args.fetch(:allow_non_tls, false)
+      @allow_non_tls = args.fetch(:allow_non_tls, false)      
     end
 
     def api_status
@@ -22,14 +22,14 @@ module Paubox
       RestClient.get(url, accept: :json)
     end
 
-    def send_mail(mail)
+    def send_mail(mail)      
       case mail
       when Mail::Message
-        payload = MailToMessage.new(mail, { allow_non_tls: @allow_non_tls })
+        payload = MailToMessage.new(mail, { allow_non_tls: @allow_non_tls , force_secure_notification: mail.force_secure_notification })
                                .send_message_payload
       when Hash
-        payload = Message.new(mail).send_message_payload
-      end
+        payload = Message.new(mail).send_message_payload      
+      end     
       url = request_endpoint('messages')
       response = RestClient.post(url, payload, auth_header)
       if mail.class == Mail::Message

@@ -43,6 +43,20 @@ RSpec.describe Paubox::Message do
       file.close
       message.add_attachment(file.path)
       expect(message.attachments.map { |a| base64_encoded?(a[:content]) }.uniq).to eq [true]
+    end 
+    
+    it 'builds force secure notification valid value' do
+      message = Paubox::Message.new(message_with_force_secure_notification_args)
+      tested_keys = %i[force_secure_notification]
+      expected_results = true
+      expect(message.send(:build_force_secure_notification)).to eq expected_results
+    end
+
+    it 'builds force secure notification invalid value' do
+      message = Paubox::Message.new(message_with_invalid_force_secure_notification_args)
+      tested_keys = %i[force_secure_notification]
+      expected_results = nil
+      expect(message.send(:build_force_secure_notification)).to eq expected_results
     end
 
     # it 'remaps hash keys for JSON request' do

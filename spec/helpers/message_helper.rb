@@ -23,10 +23,18 @@ module Helpers
     def multipart_message_args(args = {})
       base_message_args({ text_content: 'Plain text body.', html_content: '<h1>Test HTML</h1>' }.merge(args))
     end
-
+    
     def message_with_attachment_args(args = {})
       multipart_message_args({ attachments: [ filename: 'test.csv', content_type: 'text/csv',
                                               content: 'first, second ' ] }.merge(args))
+    end
+
+    def message_with_force_secure_notification_args(args = {})
+      base_message_args({ force_secure_notification: 'true'}.merge(args))
+    end
+
+    def message_with_invalid_force_secure_notification_args(args = {})
+      base_message_args({ force_secure_notification: true}.merge(args))
     end
 
     def base64_encoded?(value)

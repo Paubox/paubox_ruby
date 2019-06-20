@@ -9,6 +9,7 @@ module Paubox
     def initialize(mail, args = {})
       @mail = mail
       @allow_non_tls = args.fetch(:allow_non_tls, false)
+      @force_secure_notification = args.fetch(:force_secure_notification, nil)
     end
 
     def send_message_payload
@@ -48,12 +49,32 @@ module Paubox
       %i[from reply_to subject].map { |k| [k, mail[k].to_s] }.to_h
     end
 
+    def build_force_secure_notification
+      if @force_secure_notification.instance_of?(String)
+        unless (@force_secure_notification.to_s.empty? ) # if force_secure_notification is not nil or empty         
+          force_secure_notification_val = @force_secure_notification.strip.downcase
+          if force_secure_notification_val == "true"
+            return true        
+          elsif force_secure_notification_val == "false"         
+            return false;        
+          else
+            return nil;   
+          end   
+        end        
+      end
+      return nil;
+    end
+
     def build_parts
       msg = {}
       msg[:recipients] = string_or_array_to_array(mail.to)
       msg[:recipients] += string_or_array_to_array(mail.cc)
       msg[:bcc] = string_or_array_to_array(mail.bcc)
-      msg[:allow_non_tls] = @allow_non_tls
+      msg[:allow_non_tls] = @allow_non_tls            
+      @force_secure_notification = build_force_secure_notification
+      unless (@force_secure_notification.nil?)        
+        msg[:force_secure_notification] = @force_secure_notification
+      end       
       msg[:headers] = build_headers
       msg[:content] = build_content
       msg[:attachments] = build_attachments

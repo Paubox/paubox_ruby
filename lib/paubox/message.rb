@@ -3,7 +3,7 @@ module Paubox
   class Message
     include Paubox::FormatHelper
     attr_accessor :from, :to, :cc, :bcc, :subject, :reply_to, :text_content,
-                  :html_content, :allow_non_tls
+                  :html_content, :allow_non_tls, :force_secure_notification
 
     def initialize(args)
       @from = args[:from]
@@ -17,6 +17,7 @@ module Paubox
       @packaged_attachments = []
       @attachments = build_attachments(args[:attachments])
       @allow_non_tls = args.fetch(:allow_non_tls, false)
+      @force_secure_notification =  args.fetch(:force_secure_notification, nil)
     end
 
     def send_message_payload
@@ -59,10 +60,30 @@ module Paubox
       %i[from reply_to subject].map { |k| [k, self.send(k)] }.to_h
     end
 
+    def build_force_secure_notification
+      if @force_secure_notification.instance_of?(String)
+        unless (@force_secure_notification.to_s.empty? ) # if force_secure_notification is not nil or empty         
+          force_secure_notification_val = @force_secure_notification.strip.downcase
+          if force_secure_notification_val == "true"
+            return true        
+          elsif force_secure_notification_val == "false"         
+            return false;        
+          else
+            return nil;   
+          end   
+        end        
+      end
+      return nil;
+    end
+
     def build_parts
       msg = {}
       msg[:recipients] = string_or_array_to_array(to) + string_or_array_to_array(cc)
-      msg[:allow_non_tls] = @allow_non_tls
+      msg[:allow_non_tls] = @allow_non_tls      
+      @force_secure_notification = build_force_secure_notification
+      unless (@force_secure_notification.nil?)        
+        msg[:force_secure_notification] = @force_secure_notification
+      end    
       msg[:bcc] = string_or_array_to_array(bcc)
       msg[:headers] = build_headers
       msg[:content] = build_content
