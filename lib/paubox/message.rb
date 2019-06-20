@@ -61,7 +61,8 @@ module Paubox
 
     def build_parts
       msg = {}
-      msg[:recipients] = string_or_array_to_array(to) + string_or_array_to_array(cc)
+      msg[:recipients] = string_or_array_to_array(to)
+      msg[:cc] = string_or_array_to_array(cc)
       msg[:allow_non_tls] = @allow_non_tls
       msg[:bcc] = string_or_array_to_array(bcc)
       msg[:headers] = build_headers
