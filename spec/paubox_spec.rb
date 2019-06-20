@@ -1,4 +1,6 @@
-require "spec_helper"
+# frozen_string_literal: true
+
+require 'spec_helper'
 
 RSpec.describe Paubox do
   it 'has a version number' do
@@ -18,7 +20,7 @@ RSpec.describe Paubox do
       expect(client.api_key).to eq 'test_key'
     end
 
-    it "Sets the API user" do
+    it 'Sets the API user' do
       client = Paubox::Client.new
       expect(client.api_user).to eq 'test_user'
     end

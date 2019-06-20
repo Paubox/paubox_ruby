@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module Paubox
   # The Message class is for building a Paubox email message using a hash.
   class Message
@@ -17,7 +19,7 @@ module Paubox
       @packaged_attachments = []
       @attachments = build_attachments(args[:attachments])
       @allow_non_tls = args.fetch(:allow_non_tls, false)
-      @force_secure_notification =  args.fetch(:force_secure_notification, nil)
+      @force_secure_notification = args.fetch(:force_secure_notification, nil)
     end
 
     def send_message_payload
@@ -26,8 +28,8 @@ module Paubox
 
     def add_attachment(file_path)
       @packaged_attachments << { filename: file_path.split('/').last,
-        content_type: `file --b --mime-type #{file_path}`.chomp,
-        content: Base64.encode64(File.read(file_path)) }
+                                 content_type: `file --b --mime-type #{file_path}`.chomp,
+                                 content: Base64.encode64(File.read(file_path)) }
     end
 
     def attachments
@@ -42,8 +44,9 @@ module Paubox
 
     def build_attachments(args)
       return (@packaged_attachments = []) if args.to_a.empty?
+
       args.each do |a|
-        a[:content] =  base64_encode_if_needed(a[:content])
+        a[:content] = base64_encode_if_needed(a[:content])
         @packaged_attachments << a
       end
       @packaged_attachments
@@ -57,33 +60,33 @@ module Paubox
     end
 
     def build_headers
-      %i[from reply_to subject].map { |k| [k, self.send(k)] }.to_h
+      %i[from reply_to subject].map { |k| [k, send(k)] }.to_h
     end
 
     def build_force_secure_notification
       if @force_secure_notification.instance_of?(String)
-        unless (@force_secure_notification.to_s.empty? ) # if force_secure_notification is not nil or empty         
+        unless @force_secure_notification.to_s.empty? # if force_secure_notification is not nil or empty
           force_secure_notification_val = @force_secure_notification.strip.downcase
-          if force_secure_notification_val == "true"
-            return true        
-          elsif force_secure_notification_val == "false"         
-            return false;        
+          if force_secure_notification_val == 'true'
+            return true
+          elsif force_secure_notification_val == 'false'
+            return false
           else
-            return nil;   
-          end   
-        end        
+            return nil
+          end
+        end
       end
-      return nil;
+      nil
     end
 
     def build_parts
       msg = {}
       msg[:recipients] = string_or_array_to_array(to) + string_or_array_to_array(cc)
-      msg[:allow_non_tls] = @allow_non_tls      
+      msg[:allow_non_tls] = @allow_non_tls
       @force_secure_notification = build_force_secure_notification
-      unless (@force_secure_notification.nil?)        
+      unless @force_secure_notification.nil?
         msg[:force_secure_notification] = @force_secure_notification
-      end    
+      end
       msg[:bcc] = string_or_array_to_array(bcc)
       msg[:headers] = build_headers
       msg[:content] = build_content

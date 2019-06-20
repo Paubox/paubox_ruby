@@ -1,4 +1,6 @@
-require "spec_helper"
+# frozen_string_literal: true
+
+require 'spec_helper'
 require './spec/helpers/email_disposition_helper'
 
 RSpec.configure do |c|
@@ -16,7 +18,7 @@ RSpec.describe Paubox::Client do
 
     it 'can override default parameters' do
       client = Paubox::Client.new(api_key: 'test_key', api_user: 'paubox_test',
-        api_protocol: '', api_host: 'localhost:3000', api_version: 'v2')
+                                  api_protocol: '', api_host: 'localhost:3000', api_version: 'v2')
       expect(client.send(:request_endpoint, 'test')).to eq 'localhost:3000/v2/paubox_test/test'
     end
   end

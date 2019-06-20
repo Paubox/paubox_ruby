@@ -1,16 +1,20 @@
+# frozen_string_literal: true
+
 module Paubox
   # Utility methods for Message and MailToMessage
   module FormatHelper
     require 'base64'
-    BASE64_REGEX = %r(/^(?:[A-Za-z0-9+\/]{4}\n?)*(?:[A-Za-z0-9+\/]{2}==|[A-Za-z0-9+\/]{3}=)?$/)
+    BASE64_REGEX = %r(/^(?:[A-Za-z0-9+\/]{4}\n?)*(?:[A-Za-z0-9+\/]{2}==|[A-Za-z0-9+\/]{3}=)?$/).freeze
 
     def base64_encoded?(value)
       return false unless value.is_a?(String)
+
       !value.strip.match(BASE64_REGEX).nil?
     end
 
     def base64_encode_if_needed(str)
       return str if base64_encoded?(str.to_s)
+
       Base64.encode64(str.to_s)
     end
 
@@ -21,6 +25,7 @@ module Paubox
       hash.each_pair do |key, val|
         converted[ruby_to_json_key(key)] = val.is_a?(Hash) ? convert_keys_to_json_version(val) : val
         next unless val.is_a?(Array)
+
         val.each_with_index { |el, i| val[i] = convert_keys_to_json_version(el) if el.is_a?(Hash) }
       end
       converted
@@ -29,7 +34,7 @@ module Paubox
     def ruby_to_json_key(key)
       { reply_to: 'reply-to', html_content: 'text/html', text_content: 'text/plain',
         filename: 'fileName', file_name: 'fileName', content_type: 'contentType',
-        allow_non_tls: 'allowNonTLS' , force_secure_notification: 'forceSecureNotification' }[key] || key.to_s
+        allow_non_tls: 'allowNonTLS', force_secure_notification: 'forceSecureNotification' }[key] || key.to_s
     end
 
     # def get_values_whitelist(*vals)

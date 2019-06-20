@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module Helpers
   module MailHelper
     require 'base64'
@@ -21,7 +23,7 @@ module Helpers
     end
 
     def plain_text_message(args = {})
-      base_message({'body' => 'Test plain text body.'}.merge(args))
+      base_message({ 'body' => 'Test plain text body.' }.merge(args))
     end
 
     def html_only_message(args = {})
@@ -59,8 +61,8 @@ module Helpers
 
     def base64_encode_if_needed(str)
       return str if base64_encoded?(str.to_s)
+
       Base64.encode64(str.to_s)
     end
-    
   end
 end

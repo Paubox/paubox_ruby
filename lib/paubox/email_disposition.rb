@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module Paubox
   # Parses email dispositions from /v1/message_reciept response to friendly Ruby
   class EmailDisposition
@@ -26,6 +28,7 @@ module Paubox
 
     def build_errors
       return [] unless response['errors']
+
       errors = response['errors']
       errors.map { |e| ResponseError.new(e['code'], e['status'], e['title'], e['details']) }
     end
@@ -34,6 +37,7 @@ module Paubox
 
     def build_message_deliveries
       return [] unless @message_data
+
       deliveries = @message_data.fetch('message_deliveries', [])
       deliveries.map do |delivery|
         status = build_message_delivery_status(delivery['status'])
@@ -47,6 +51,7 @@ module Paubox
       opened_status = stat['openedStatus'].to_s.empty? ? 'unopened' : stat['openedStatus']
       opened_time = stat['openedTime'].to_s.empty? ? nil : DateTime.parse(stat['openedTime'])
       return MessageMultiDeliveryStatus.new(delivery_status, delivery_time) if multi_recipient?
+
       MessageDeliveryStatus.new(delivery_status, delivery_time, opened_status, opened_time)
     end
 

@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module Paubox
   # The MailToMessage class takes a Ruby Mail object and attempts to parse it
   # into a Hash formatted for the JSON payload of HTTP api request.
@@ -21,6 +23,7 @@ module Paubox
     def build_attachments
       attachments = mail.attachments
       return [] if attachments.empty?
+
       packaged_attachments = []
       attachments.each do |attch|
         packaged_attachments << { content: convert_binary_to_base64(attch.body.decoded),
@@ -38,7 +41,7 @@ module Paubox
         content[:html_content] = base64_encode_if_needed(html_content) unless html_content.nil?
         content[:text_content] = text_content unless text_content.nil?
       elsif mail.content_type.to_s.include? 'text/html'
-        content[:html_content] =base64_encode_if_needed(mail.body.to_s)
+        content[:html_content] = base64_encode_if_needed(mail.body.to_s)
       else
         content[:text_content] = mail.body.to_s
       end
@@ -51,18 +54,18 @@ module Paubox
 
     def build_force_secure_notification
       if @force_secure_notification.instance_of?(String)
-        unless (@force_secure_notification.to_s.empty? ) # if force_secure_notification is not nil or empty         
+        unless @force_secure_notification.to_s.empty? # if force_secure_notification is not nil or empty
           force_secure_notification_val = @force_secure_notification.strip.downcase
-          if force_secure_notification_val == "true"
-            return true        
-          elsif force_secure_notification_val == "false"         
-            return false;        
+          if force_secure_notification_val == 'true'
+            return true
+          elsif force_secure_notification_val == 'false'
+            return false
           else
-            return nil;   
-          end   
-        end        
+            return nil
+          end
+        end
       end
-      return nil;
+      nil
     end
 
     def build_parts
@@ -70,11 +73,11 @@ module Paubox
       msg[:recipients] = string_or_array_to_array(mail.to)
       msg[:recipients] += string_or_array_to_array(mail.cc)
       msg[:bcc] = string_or_array_to_array(mail.bcc)
-      msg[:allow_non_tls] = @allow_non_tls            
+      msg[:allow_non_tls] = @allow_non_tls
       @force_secure_notification = build_force_secure_notification
-      unless (@force_secure_notification.nil?)        
+      unless @force_secure_notification.nil?
         msg[:force_secure_notification] = @force_secure_notification
-      end       
+      end
       msg[:headers] = build_headers
       msg[:content] = build_content
       msg[:attachments] = build_attachments

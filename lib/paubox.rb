@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require 'paubox/version'
 require 'paubox/client'
 require 'paubox/format_helper'

@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module Mail
   class Paubox
     attr_accessor :settings
@@ -8,7 +10,7 @@ module Mail
 
     def deliver!(mail)
       client = ::Paubox::Client.new(settings)
-      response = client.send_mail(mail)     
+      response = client.send_mail(mail)
       puts response
     end
   end

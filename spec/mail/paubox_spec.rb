@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require 'spec_helper'
 require './spec/helpers/mail_helper'
 
@@ -17,9 +19,9 @@ RSpec.describe Mail::Paubox do
     it 'delivers a Mail message via the Transactional Email API' do
       mail = message_with_attachments
       client = Paubox::Client.new
-      stub_request(:post, client.send(:request_endpoint, 'messages')).
-        to_return(body: { 'message' => 'Service OK', 'sourceTrackingId' => '123' }.to_json,
-                  status: 200,  headers: {'Content-Type' => 'application/json'})
+      stub_request(:post, client.send(:request_endpoint, 'messages'))
+        .to_return(body: { 'message' => 'Service OK', 'sourceTrackingId' => '123' }.to_json,
+                   status: 200, headers: { 'Content-Type' => 'application/json' })
       response = client.deliver_mail(mail)
       expect(response['message']).to eq 'Service OK'
     end

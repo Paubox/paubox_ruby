@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require 'spec_helper'
 require 'mail'
 require './spec/helpers/mail_helper'
@@ -38,7 +40,7 @@ RSpec.describe Paubox::MailToMessage do
       builder = Paubox::MailToMessage.new(multipart_message)
       content = builder.send(:build_content)
       expected_content = { html_content: base64_encode_if_needed(multipart_message.html_part.body.to_s),
-        text_content: multipart_message.text_part.body.to_s }
+                           text_content: multipart_message.text_part.body.to_s }
       expect(content).to eq expected_content
     end
 
@@ -61,12 +63,12 @@ RSpec.describe Paubox::MailToMessage do
 
     it 'extracts html content and keeps contents in base64 encoding' do
       builder = Paubox::MailToMessage.new(html_only_message)
-      content = builder.send(:build_content)      
+      content = builder.send(:build_content)
       expect(Base64.decode64(content[:html_content])).to eq '<h1>Test HTML</h1>'
     end
 
     it 'sets allow_non_tls attribute' do
-      payload = Paubox::MailToMessage.new(multipart_message, { allow_non_tls: true })
+      payload = Paubox::MailToMessage.new(multipart_message, allow_non_tls: true)
                                      .send_message_payload
       expect(JSON.parse(payload).dig('data', 'message', 'allowNonTLS')).to be true
     end
@@ -78,35 +80,33 @@ RSpec.describe Paubox::MailToMessage do
     end
 
     it 'sets force_secure_notification attribute to false' do
-      payload = Paubox::MailToMessage.new(multipart_message, { force_secure_notification: "false" })
+      payload = Paubox::MailToMessage.new(multipart_message, force_secure_notification: 'false')
                                      .send_message_payload
       expect(JSON.parse(payload).dig('data', 'message', 'forceSecureNotification')).to be false
     end
 
     it 'sets force_secure_notification attribute to true' do
-      payload = Paubox::MailToMessage.new(multipart_message, { force_secure_notification: "true" })
+      payload = Paubox::MailToMessage.new(multipart_message, force_secure_notification: 'true')
                                      .send_message_payload
       expect(JSON.parse(payload).dig('data', 'message', 'forceSecureNotification')).to be true
     end
 
     it 'sets force_secure_notification attribute to nil default' do
       payload = Paubox::MailToMessage.new(multipart_message)
-                                     .send_message_payload      
+                                     .send_message_payload
       expect(JSON.parse(payload).dig('data', 'message', 'forceSecureNotification')).to be nil
     end
 
     it 'sets force_secure_notification attribute to empty' do
-      payload = Paubox::MailToMessage.new(multipart_message, { force_secure_notification: "" })
-                                     .send_message_payload      
+      payload = Paubox::MailToMessage.new(multipart_message, force_secure_notification: '')
+                                     .send_message_payload
       expect(JSON.parse(payload).dig('data', 'message', 'forceSecureNotification')).to be nil
     end
 
     it 'sets force_secure_notification attribute to boolean value' do
-      payload = Paubox::MailToMessage.new(multipart_message, { force_secure_notification: true })
-                                     .send_message_payload      
+      payload = Paubox::MailToMessage.new(multipart_message, force_secure_notification: true)
+                                     .send_message_payload
       expect(JSON.parse(payload).dig('data', 'message', 'forceSecureNotification')).to be nil
     end
-
   end
 end
-
