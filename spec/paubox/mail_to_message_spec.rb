@@ -110,7 +110,7 @@ RSpec.describe Paubox::MailToMessage do
     end
 
     it 'set and extract cc field' do
-      builder = Paubox::MailToMessage.new(message_with_attachments)
+      builder = Paubox::MailToMessage.new(message_with_attachments)                                    
       content = builder.send(:build_parts)
       expected_content = ['cc@test.paubox.net']
       expect(content[:cc]).to eq expected_content
