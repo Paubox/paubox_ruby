@@ -52,7 +52,7 @@ module Paubox
     def build_content
       content = {}
       content[:text_content] = text_content if text_content
-      content[:html_content] = html_content if html_content
+      content[:html_content] = base64_encode_if_needed(html_content) if html_content
       content
     end
 

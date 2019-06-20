@@ -37,7 +37,7 @@ RSpec.describe Paubox::MailToMessage do
     it 'extracts multipart html and text bodies' do
       builder = Paubox::MailToMessage.new(multipart_message)
       content = builder.send(:build_content)
-      expected_content = { html_content: multipart_message.html_part.body.to_s,
+      expected_content = { html_content: base64_encode_if_needed(multipart_message.html_part.body.to_s),
         text_content: multipart_message.text_part.body.to_s }
       expect(content).to eq expected_content
     end
@@ -45,7 +45,7 @@ RSpec.describe Paubox::MailToMessage do
     it 'sets multipart html to html_content in html-only message' do
       builder = Paubox::MailToMessage.new(html_only_message)
       content = JSON.parse(builder.send(:send_message_payload))
-      expected_content = { html_content: multipart_message.html_part.body.to_s }
+      expected_content = { html_content: base64_encode_if_needed(multipart_message.html_part.body.to_s) }
       expect(content.dig('data', 'message', 'content', 'text/html')).to eq expected_content[:html_content]
       expect(content['text_content'].nil?).to be true
     end
@@ -58,7 +58,13 @@ RSpec.describe Paubox::MailToMessage do
       expect(attachment[:file_name].include?('.csv')).to be true
       expect(attachment[:content_type]).to eq 'text/csv'
     end
-    
+
+    it 'extracts html content and keeps contents in base64 encoding' do
+      builder = Paubox::MailToMessage.new(html_only_message)
+      content = builder.send(:build_content)      
+      expect(Base64.decode64(content[:html_content])).to eq '<h1>Test HTML</h1>'
+    end
+
     it 'sets allow_non_tls attribute' do
       payload = Paubox::MailToMessage.new(multipart_message, { allow_non_tls: true })
                                      .send_message_payload

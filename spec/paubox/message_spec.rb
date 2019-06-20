@@ -18,7 +18,7 @@ RSpec.describe Paubox::Message do
     it 'builds content' do
       message = Paubox::Message.new(message_with_attachment_args)
       tested_keys = %i[text_content html_content]
-      expected_results = message_with_attachment_args.select { |k, v| tested_keys.include?(k) }
+      expected_results = message_with_attachment_encoded_args.select { |k, v| tested_keys.include?(k) }
       expect(message.send(:build_content)).to eq expected_results
     end
 

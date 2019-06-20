@@ -56,5 +56,11 @@ module Helpers
       mail.add_file(file.path)
       mail
     end
+
+    def base64_encode_if_needed(str)
+      return str if base64_encoded?(str.to_s)
+      Base64.encode64(str.to_s)
+    end
+    
   end
 end
