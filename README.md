@@ -54,6 +54,10 @@ end
 
 Using the Ruby Mail Library? Sending via Paubox is easy. Just build a message as normal and set Mail::Paubox as the delivery method.
 ```ruby
+require 'Paubox'
+require 'json'
+require 'mail'
+
 message = Mail.new do
   from            'you@yourdomain.com'
   to              'someone@somewhere.com'
@@ -83,6 +87,10 @@ message.source_tracking_id
 
 If you want to send non-PHI mail that does not need to be HIPAA-compliant, you can allow the message delivery to take place even if a TLS connection is unavailable. This means a message will not be converted into a secure portal message when a non-TLS connection is encountered.
 ```ruby
+require 'Paubox'
+require 'json'
+require 'mail'
+
 message = Mail.new do
   from            'you@yourdomain.com'
   to              'someone@somewhere.com'
@@ -102,6 +110,10 @@ Paubox Secure Notifications allow an extra layer of security, especially when co
 
 Instead of receiving an email with the message contents, the recipient will receive a notification email that they have a new message in Paubox.
 ```ruby
+require 'Paubox'
+require 'json'
+require 'mail'
+
 message = Mail.new do
   from            'you@yourdomain.com'
   to              'someone@somewhere.com'
@@ -115,10 +127,32 @@ message.force_secure_notification = 'true'
 message.deliver!
 ```
 
+### Adding Attachments
+
+```ruby
+require 'Paubox'
+require 'json'
+require 'mail'
+
+message = Mail.new do
+  from            'you@yourdomain.com'
+  to              'someone@somewhere.com'
+  cc              'another@somewhere.com'
+  subject         'HIPAA-compliant email made easy'
+
+  delivery_method Mail::Paubox
+end
+
+message.add_file("D:\\TestFolder\\YourFileName.txt")
+message.deliver!
+```
 
 ### Sending Messages using just the Paubox API
 You don't need to use Ruby Mail to build and send messages with Paubox.
 ```ruby
+require 'Paubox'
+require 'json'
+
 args = { from: 'you@yourdomain.com',
          to: 'someone@domain.com, someone-else@domain.com',
          cc: ['another@domain.com', 'yet-another@domain.com'],
@@ -138,6 +172,9 @@ client.deliver_mail(message)
 
 ### Checking Email Dispositions
 ```ruby
+require 'Paubox'
+require 'json'
+
 client = Paubox::Client.new
 email_disposition = client.email_disposition('2a3c048485aa4cf6')
 
