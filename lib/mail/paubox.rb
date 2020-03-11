@@ -11,7 +11,6 @@ module Mail
     def deliver!(mail)
       client = ::Paubox::Client.new(settings)
       response = client.send_mail(mail)
-      puts response
     end
   end
 
