@@ -1,9 +1,9 @@
 <img src="https://github.com/Paubox/paubox-csharp/raw/master/paubox_logo.png" alt="Paubox" width="150px">
 
 # Paubox Gem
-This gem and Paubox Transactional Email HTTP API are currently in alpha development.
+This is gem for the Paubox Email API.
 
-This is the official Ruby wrapper for the Paubox Transactional Email HTTP API. The Paubox Transactional Email API allows your application to send secure, HIPAA-compliant email via Paubox and track deliveries and opens.
+This is the official Ruby wrapper for the Paubox Email API. The Paubox Email API allows your application to send secure, HIPAA compliant email via Paubox and track deliveries and opens.
 
 It extends the [Ruby Mail Library](https://github.com/mikel/mail) for seamless integration in your existing Ruby application. The API wrapper also allows you to construct and send messages directly without the Ruby Mail Library.
 
@@ -85,7 +85,7 @@ message.source_tracking_id
 
 ### Allowing non-TLS message delivery
 
-If you want to send non-PHI mail that does not need to be HIPAA-compliant, you can allow the message delivery to take place even if a TLS connection is unavailable. This means a message will not be converted into a secure portal message when a non-TLS connection is encountered.
+If you want to send non-PHI mail that does not need to be HIPAA compliant, you can allow the message delivery to take place even if a TLS connection is unavailable. This means a message will not be converted into a secure portal message when a non-TLS connection is encountered.
 ```ruby
 require 'Paubox'
 require 'json'
@@ -226,5 +226,5 @@ See the License for the specific language governing permissions and
 limitations under the License.
 
 ## Copyright
-Copyright &copy; 2019, Paubox Inc.
+Copyright &copy; 2020, Paubox Inc.
 
