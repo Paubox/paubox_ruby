@@ -8,8 +8,8 @@ require 'paubox/version'
 Gem::Specification.new do |spec|
   spec.name          = 'paubox'
   spec.version       = Paubox::VERSION
-  spec.authors       = ['Paubox', 'Jonathan Greeley']
-  spec.email         = ['jon.r.greeley@gmail.com']
+  spec.authors       = ['Paubox']
+  spec.email         = ['engineering@paubox.com']
 
   spec.summary       = "Paubox's Official Ruby SDK"
   spec.description   = 'Ruby SDK for interacting with the Paubox Transactional Email HTTP API.'
@@ -23,9 +23,9 @@ Gem::Specification.new do |spec|
   spec.executables   = spec.files.grep(%r{^exe/}) { |f| File.basename(f) }
   spec.require_paths = ['lib']
   spec.required_ruby_version = '>= 2.3'
-  spec.add_development_dependency 'bundler', '~> 2.0.2'
+  spec.add_development_dependency 'bundler', '~> 2.0'
   spec.add_development_dependency 'pry'
-  spec.add_development_dependency 'rake', '~> 10.0'
+  spec.add_development_dependency "rake", ">= 12.3.3"
   spec.add_development_dependency 'rspec', '~> 3.2'
   spec.add_development_dependency 'webmock', '~> 2.1'
 
