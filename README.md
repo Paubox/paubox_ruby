@@ -39,12 +39,32 @@ Once you have an account, follow the instructions on the Rest API dashboard to v
 ### Configuring API Credentials
 Include your API credentials in an initializer (e.g. config/initializers/paubox.rb in Rails).
 
-Keep your API credentials out of version control. Store these in environmental variables.
+Keep your API credentials out of version control. Store these in environment variables.
+
 ```ruby
 Paubox.configure do |config|
   config.api_key = ENV['PAUBOX_API_KEY']
   config.api_user = ENV['PAUBOX_API_USER']
 end
+```
+
+If you need to send from multiple domains, you can pass credentials in the options hash when you set Ruby Mail's `Mail#delivery_method`, or when using `Paubox::Message`, when you instantiate `Paubox::Client`.
+
+**(optional) Setting credentials when using Ruby Mail:**
+
+```ruby
+message = Mail.new do
+  ...
+  delivery_method(Mail::Paubox, api_key: ENV['PAUBOX_API_KEY'],
+                                api_user: ENV['PAUBOX_API_USER'])
+end
+```
+
+**(optional) Setting credentials when using Paubox::Client:**
+
+```ruby
+client = Paubox::Client.new(api_key: ENV['PAUBOX_API_KEY'],
+                            api_user: ENV['PAUBOX_API_USER'])
 ```
 
 <a name="#usage"></a>
