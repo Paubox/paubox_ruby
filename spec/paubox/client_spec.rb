@@ -9,13 +9,6 @@ end
 
 RSpec.describe Paubox::Client do
   describe '#initialize' do
-    before do
-      Paubox.configure do |config|
-        config.api_key = 'test_key'
-        config.api_user = 'test_user'
-      end
-    end
-
     it 'can override default parameters' do
       client = Paubox::Client.new(api_key: 'test_key', api_user: 'paubox_test',
                                   api_protocol: '', api_host: 'localhost:3000', api_version: 'v2')

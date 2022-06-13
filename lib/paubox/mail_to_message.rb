@@ -12,6 +12,7 @@ module Paubox
       @mail = mail
       @allow_non_tls = args.fetch(:allow_non_tls, false)
       @force_secure_notification = args.fetch(:force_secure_notification, nil)
+      @custom_headers = args.fetch(:custom_headers, {})
     end
 
     def send_message_payload
@@ -68,6 +69,17 @@ module Paubox
       nil
     end
 
+    def build_custom_headers
+      custom_headers = {}
+      @custom_headers.each do |k, v|
+        normalized_key = k.to_s.strip.downcase.gsub(/[\s:]+/, '')
+        next if normalized_key.empty?
+        header_key = /^x-/i =~ normalized_key ? normalized_key : "x-#{normalized_key}"
+        custom_headers[header_key] = v
+      end
+      custom_headers
+    end
+
     def build_parts
       msg = {}
       msg[:recipients] = string_or_array_to_array(mail.to)
@@ -79,6 +91,7 @@ module Paubox
         msg[:force_secure_notification] = @force_secure_notification
       end
       msg[:headers] = build_headers
+      msg[:custom_headers] = build_custom_headers
       msg[:content] = build_content
       msg[:attachments] = build_attachments
       msg
@@ -86,9 +99,14 @@ module Paubox
 
     def convert_binary_to_base64(f)
       file = Tempfile.new(encoding: 'ascii-8bit')
-      file.write(f)
-      file.rewind
-      Base64.encode64(file.read)
+      begin
+        file.write(f)
+        file.rewind
+        Base64.encode64(file.read)
+      ensure
+        file.close
+        file.unlink
+      end
     end
   end
 end

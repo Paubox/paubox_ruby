@@ -18,6 +18,10 @@ module Paubox
     yield(configuration)
   end
 
+  def self.reset_configuration!
+    self.configuration = Configuration.new
+  end
+
   class Configuration
     attr_accessor :api_key, :api_user
   end

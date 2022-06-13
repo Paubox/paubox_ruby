@@ -54,10 +54,17 @@ module Helpers
     def message_with_attachments(args = {})
       mail = multipart_message(args)
       file = Tempfile.new(['test', '.csv'])
-      file.write('first, second')
-      file.close
-      mail.add_file(file.path)
-      mail
+      begin
+        file.write('first, second')
+      ensure
+        file.close
+      end
+      begin
+        mail.add_file(file.path)
+        mail
+      ensure
+        file.unlink
+      end
     end
 
     def base64_encode_if_needed(str)

@@ -9,14 +9,12 @@ end
 
 RSpec.describe Mail::Message do
   describe 'extends class' do
-    before do
+
+    it 'sets source_tracking_id' do
       Paubox.configure do |config|
         config.api_key = 'test_key'
         config.api_user = 'test_user'
       end
-    end
-
-    it 'sets source_tracking_id' do
       mail = message_with_attachments
       client = Paubox::Client.new
       stub_request(:post, client.send(:request_endpoint, 'messages'))

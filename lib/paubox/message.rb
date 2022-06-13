@@ -20,6 +20,7 @@ module Paubox
       @attachments = build_attachments(args[:attachments])
       @allow_non_tls = args.fetch(:allow_non_tls, false)
       @force_secure_notification = args.fetch(:force_secure_notification, nil)
+      @custom_headers = args.fetch(:custom_headers, {})
     end
 
     def send_message_payload
@@ -27,9 +28,11 @@ module Paubox
     end
 
     def add_attachment(file_path)
-      @packaged_attachments << { filename: file_path.split('/').last,
-                                 content_type: `file --b --mime-type #{file_path}`.chomp,
-                                 content: Base64.encode64(File.read(file_path)) }
+      @packaged_attachments << {
+        filename: file_path.split('/').last,
+        content_type: `file --b --mime-type #{file_path}`.chomp,
+        content: Base64.encode64(File.read(file_path))
+      }
     end
 
     def attachments
@@ -64,19 +67,30 @@ module Paubox
     end
 
     def build_force_secure_notification
-      if @force_secure_notification.instance_of?(String)
-        unless @force_secure_notification.to_s.empty? # if force_secure_notification is not nil or empty
-          force_secure_notification_val = @force_secure_notification.strip.downcase
-          if force_secure_notification_val == 'true'
-            return true
-          elsif force_secure_notification_val == 'false'
-            return false
-          else
-            return nil
-          end
+      case @force_secure_notification
+      when String
+        case @force_secure_notification.strip.downcase
+        when 'true'
+          true
+        when 'false'
+          false
+        else
+          nil
         end
+      else
+        !!@force_secure_notification
       end
-      nil
+    end
+
+    def build_custom_headers
+      custom_headers = {}
+      @custom_headers.each do |k, v|
+        normalized_key = k.to_s.strip.downcase.gsub(/[\s:]+/, '')
+        next if normalized_key.empty?
+        header_key = /^x-/i =~ normalized_key ? normalized_key : "x-#{normalized_key}"
+        custom_headers[header_key] = v
+      end
+      custom_headers
     end
 
     def build_parts
@@ -90,6 +104,7 @@ module Paubox
       end
       msg[:bcc] = string_or_array_to_array(bcc)
       msg[:headers] = build_headers
+      msg[:custom_headers] = build_custom_headers
       msg[:content] = build_content
       msg[:attachments] = attachments
       msg

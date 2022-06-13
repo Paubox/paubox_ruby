@@ -40,11 +40,11 @@ module Helpers
                                                      content: 'first, second '] }.merge(args))
     end
 
-    def message_with_force_secure_notification_args(args = {})
+    def message_with_force_secure_notification_string_args(args = {})
       base_message_args({ force_secure_notification: 'true' }.merge(args))
     end
 
-    def message_with_invalid_force_secure_notification_args(args = {})
+    def message_with_force_secure_notification_boolean_args(args = {})
       base_message_args({ force_secure_notification: true }.merge(args))
     end
 

@@ -67,8 +67,8 @@ module Paubox
     end
 
     def defaults
-      { api_key: Paubox.configuration.api_key,
-        api_user: Paubox.configuration.api_user,
+      { api_key: Paubox.configuration.api_key || '',
+        api_user: Paubox.configuration.api_user || '',
         api_host: 'api.paubox.net',
         api_protocol: 'https://',
         api_version: 'v1',

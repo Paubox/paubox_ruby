@@ -9,14 +9,11 @@ end
 
 RSpec.describe Mail::Paubox do
   describe '#deliver!' do
-    before do
+    it 'delivers a Mail message via the Transactional Email API' do
       Paubox.configure do |config|
         config.api_key = 'test_key'
         config.api_user = 'test_user'
       end
-    end
-
-    it 'delivers a Mail message via the Transactional Email API' do
       mail = message_with_attachments
       client = Paubox::Client.new
       stub_request(:post, client.send(:request_endpoint, 'messages'))
