@@ -91,7 +91,6 @@ module Paubox
       msg[:headers] = build_headers
       msg[:content] = build_content
       msg[:attachments] = attachments
-      binding.pry
       msg
     end
   end
