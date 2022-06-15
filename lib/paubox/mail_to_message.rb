@@ -26,7 +26,7 @@ module Paubox
 
       packaged_attachments = []
       attachments.each do |attch|
-        packaged_attachments << { content: attch.body),
+        packaged_attachments << { content: attch.body,
                                   fileName: attch.filename,
                                   contentType: attch.mime_type,
                                   contentId: attch.filename,
