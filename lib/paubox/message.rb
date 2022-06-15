@@ -46,7 +46,6 @@ module Paubox
       return (@packaged_attachments = []) if args.to_a.empty?
 
       args.each do |a|
-        a[:content] = base64_encode_if_needed(a[:content])
         @packaged_attachments << a
       end
       @packaged_attachments

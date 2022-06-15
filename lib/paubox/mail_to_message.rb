@@ -26,9 +26,12 @@ module Paubox
 
       packaged_attachments = []
       attachments.each do |attch|
-        packaged_attachments << { content: convert_binary_to_base64(attch.body.decoded),
-                                  file_name: attch.filename,
-                                  content_type: attch.mime_type }
+        packaged_attachments << { content: attch.body),
+                                  fileName: attch.filename,
+                                  contentType: attch.mime_type,
+                                  contentId: attch.filename,
+                                  disposition: 'inline'                                 
+                                }
       end
       packaged_attachments
     end
