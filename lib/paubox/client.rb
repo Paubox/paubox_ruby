@@ -39,7 +39,7 @@ module Paubox
       if mail.class == Mail::Message
         mail.source_tracking_id = JSON.parse(response.body)['sourceTrackingId']
       end
-      JSON.parse(response.body)
+      response
     end
     alias deliver_mail send_mail
 
