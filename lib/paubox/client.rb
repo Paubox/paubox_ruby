@@ -36,6 +36,7 @@ module Paubox
       end
       url = request_endpoint('messages')
       response = RestClient.post(url, payload, auth_header)
+      binding.pry
       if mail.class == Mail::Message
         mail.source_tracking_id = JSON.parse(response.body)['sourceTrackingId']
       end
