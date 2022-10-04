@@ -1,8 +1,6 @@
 <img src="https://avatars.githubusercontent.com/u/22528478?s=200&v=4" alt="Paubox" width="150px">
 
 # Paubox Gem
-This is gem for the Paubox Email API.
-
 This is the official Ruby wrapper for the Paubox Email API. The Paubox Email API allows your application to send secure, HIPAA compliant email via Paubox and track deliveries and opens.
 
 It extends the [Ruby Mail Library](https://github.com/mikel/mail) for seamless integration in your existing Ruby application. The API wrapper also allows you to construct and send messages directly without the Ruby Mail Library.
@@ -73,6 +71,7 @@ client = Paubox::Client.new(api_key: ENV['PAUBOX_API_KEY'],
 ### Sending Messages with the Ruby Mail Library
 
 Using the Ruby Mail Library? Sending via Paubox is easy. Just build a message as normal and set Mail::Paubox as the delivery method.
+
 ```ruby
 require 'Paubox'
 require 'json'
@@ -106,6 +105,7 @@ message.source_tracking_id
 ### Allowing non-TLS message delivery
 
 If you want to send non-PHI mail that does not need to be HIPAA compliant, you can allow the message delivery to take place even if a TLS connection is unavailable. This means a message will not be converted into a secure portal message when a non-TLS connection is encountered.
+
 ```ruby
 require 'Paubox'
 require 'json'
@@ -129,6 +129,7 @@ message.deliver!
 Paubox Secure Notifications allow an extra layer of security, especially when coupled with an organization's requirement for message recipients to use 2-factor authentication to read messages (this setting is available to org administrators in the Paubox Admin Panel).
 
 Instead of receiving an email with the message contents, the recipient will receive a notification email that they have a new message in Paubox.
+
 ```ruby
 require 'Paubox'
 require 'json'
@@ -163,12 +164,13 @@ message = Mail.new do
   delivery_method Mail::Paubox
 end
 
-message.add_file("D:\\TestFolder\\YourFileName.txt")
+message.add_file("path_to_your_file")
 message.deliver!
 ```
 
 ### Sending Messages using just the Paubox API
 You don't need to use Ruby Mail to build and send messages with Paubox.
+
 ```ruby
 require 'Paubox'
 require 'json'
@@ -189,6 +191,37 @@ client = Paubox::Client.new
 client.deliver_mail(message)
 => {"message"=>"Service OK", "sourceTrackingId"=>"2a3c048485aa4cf6"}
 ```
+
+### Send Messages using Dynamic Templates
+Using [dynamic templates](https://docs.paubox.com/docs/paubox_email_api/dynamic_templates/) is similar to sending a regular message. Just create a `Paubox::TemplatedMessage` object and pass a `template` object with the name of the template and variables:
+
+```ruby
+require 'Paubox'
+require 'json'
+
+args = { from: 'you@yourdomain.com',
+         to: 'someone@domain.com, someone-else@domain.com',
+         cc: ['another@domain.com', 'yet-another@domain.com'],
+         bcc: 'bcc-recipient@domain.com',
+         reply_to: 'reply-to@yourdomain.com',
+         subject: 'Testing!',
+         template: {
+          name: 'Test Template',
+          values: {
+            first_name: 'Timothy',
+            last_name: 'Testerson'
+          }
+        }			
+      }
+
+templated_message = Paubox::TemplatedMessage.new(args)
+
+client = Paubox::Client.new
+client.deliver_mail(templated_message)
+=> {"sourceTrackingId"=>"166904b5-dce7-4de1-92e8-3d505c165ff5", "data"=>"Service OK"}
+```
+
+_Note that there is no `content` when using templated messages._
 
 ### Checking Email Dispositions
 ```ruby
@@ -246,5 +279,5 @@ See the License for the specific language governing permissions and
 limitations under the License.
 
 ## Copyright
-Copyright &copy; 2021, Paubox, Inc.
+Copyright &copy; 2022, Paubox, Inc.
 

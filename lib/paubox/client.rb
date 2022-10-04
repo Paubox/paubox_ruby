@@ -31,10 +31,10 @@ module Paubox
                                .send_message_payload
       when Hash
         payload = Message.new(mail).send_message_payload
-      when Paubox::Message
+      when Paubox::Message, Paubox::TemplatedMessage
         payload = mail.send_message_payload
       end
-      url = request_endpoint('messages')
+      url = request_endpoint(mail.is_a?(Paubox::TemplatedMessage) ? 'templated_messages' : 'messages')
       response = RestClient.post(url, payload, auth_header)
       if mail.class == Mail::Message
         mail.source_tracking_id = JSON.parse(response.body)['sourceTrackingId']
@@ -69,7 +69,7 @@ module Paubox
     def defaults
       { api_key: Paubox.configuration.api_key,
         api_user: Paubox.configuration.api_user,
-        api_host: 'api.paubox.net',
+        api_host: 'api.paubox.net', 
         api_protocol: 'https://',
         api_version: 'v1',
         test_mode: false }
