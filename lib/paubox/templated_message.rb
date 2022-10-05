@@ -3,7 +3,6 @@
 module Paubox
   # The TemplatedMessage class is for building a Paubox email message from a dynamic template, using a hash.
   class TemplatedMessage < Message
-    include Paubox::FormatHelper
     attr_accessor :template_name,
                   :template_values
                   
