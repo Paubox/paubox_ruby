@@ -48,6 +48,10 @@ module Helpers
       base_message_args({ force_secure_notification: true }.merge(args))
     end
 
+    def message_with_template_args(args = {})
+      base_message_args({ template: { name: 'Test Template', values: { first_name: 'Timothy', last_name: 'Testerson' } }}).merge(args)
+    end
+
     def base64_encoded?(value)
       return false unless value.is_a?(String)
 
