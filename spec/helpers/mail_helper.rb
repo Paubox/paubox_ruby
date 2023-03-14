@@ -5,6 +5,40 @@ module Helpers
     require 'base64'
     require 'mail'
     require 'tempfile'
+    require 'Paubox'
+    require 'json'
+
+
+    message = Mail.new do
+      from            'you@yourdomain.com'
+      to              'someone@somewhere.com'
+      cc              'another@somewhere.com'
+      subject         'HIPAA-compliant email made easy'
+
+      text_part do
+        body          'This message will be sent securely by Paubox.'
+      end
+
+      html_part do
+        content_type  'text/html; charset=UTF-8'
+        body          '<h1>This message will be sent securely by Paubox.</h1>'
+      end
+
+      delivery_method Mail::Paubox
+    end
+
+    message.allow_non_tls = true
+    message.force_secure_notification = 'true'
+    
+
+    file = Tempfile.new(['test', '.csv'])
+    file.write('first, second')
+    file.close
+    message.add_file(file.path)
+
+    message.deliver!
+    
+
 
     def mail_defaults
       { 'from' => 'me@test.paubox.net',

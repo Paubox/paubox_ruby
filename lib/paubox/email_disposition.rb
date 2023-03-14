@@ -4,6 +4,8 @@ module Paubox
   # Parses email dispositions from /v1/message_reciept response to friendly Ruby
   class EmailDisposition
     require 'time'
+    require 'Paubox'
+    require 'json'
     attr_reader :response, :raw_json_response, :source_tracking_id, :message_id,
                 :message_deliveries, :errors
     MessageDelivery = Struct.new(:recipient, :status)

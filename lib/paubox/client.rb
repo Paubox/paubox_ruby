@@ -5,7 +5,32 @@ module Paubox
   class Client
     require 'rest-client'
     require 'ostruct'
+    require 'Paubox'
+    require 'json'
     attr_reader :api_key, :api_user, :api_host, :api_protocol, :api_version
+
+   args = { from: 'you@yourdomain.com',
+         to: 'someone@domain.com, someone-else@domain.com',
+         cc: ['another@domain.com', 'yet-another@domain.com'],
+         bcc: 'bcc-recipient@domain.com',
+         reply_to: 'reply-to@yourdomain.com',
+         subject: 'Testing!',
+         template: {
+          name: 'Test Template',
+          values: {
+            first_name: 'Timothy',
+            last_name: 'Testerson'
+          }
+        }     
+      }
+
+    templated_message = Paubox::TemplatedMessage.new(args)
+
+    client = Paubox::Client.new
+    client.deliver_mail(templated_message)
+
+
+
 
     def initialize(args = {})
       args = defaults.merge(args)

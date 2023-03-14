@@ -31,4 +31,6 @@ Gem::Specification.new do |spec|
 
   spec.add_dependency 'mail', '>= 2.5'
   spec.add_dependency 'rest-client', '~> 2.0', '>= 2.0.2'
+  # spec.add_dependency 'Nokogiri', '~> 1.13.10'
+  spec.add_dependency 'ruby-handlebars'
 end
