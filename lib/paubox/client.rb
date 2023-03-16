@@ -50,6 +50,12 @@ module Paubox
     end
     alias message_receipt email_disposition
 
+    def send_request(method: :get, payload: {}, path: '')
+      url = request_endpoint(path)
+      
+      RestClient::Request.execute(method: method, url: url, payload: payload)
+    end
+
     private
 
     def auth_header

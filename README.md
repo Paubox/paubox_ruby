@@ -223,6 +223,32 @@ client.deliver_mail(templated_message)
 
 _Note that there is no `content` when using templated messages._
 
+
+### ADD Dynamic Template support to ruby SDK
+Create a `Paubox::DynamicTemplate` object, and the user can create, update and delete the dynamic template by passing params.
+
+
+```ruby
+
+
+dynamic_template = Paubox::DynamicTemplates.new
+template_name = 'name_of_template' 
+template_path = 'template_file_path'
+
+
+dynamic_template.create('template_name', template_path)
+=> {"RestClient::Response"=>"201", "message"=>"Template #{name} created!"}
+
+dynamic_template.update('template_name', template_path, template_id)
+=> {"RestClient::Response"=>"200", "message"=>"Template #{name} updated!"}
+
+dynamic_template.destroy(template_id)
+=> {"RestClient::Response"=>"200", "message"=>"Template #{name} deleted!"}
+
+
+```
+
+
 ### Checking Email Dispositions
 ```ruby
 require 'Paubox'
