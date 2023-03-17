@@ -191,9 +191,41 @@ client = Paubox::Client.new
 client.deliver_mail(message)
 => {"message"=>"Service OK", "sourceTrackingId"=>"2a3c048485aa4cf6"}
 ```
+### Manage Dynamic Templates
+Can manage(create, update, find and delete) the dynamic templates. by using the following commands and use these to send the Templated Messages.
+
+```ruby
+require 'Paubox'
+require 'json'
+
+template_name = "Template name"
+template_path = "Template File path"
+
+# For create the new dynamic template
+Paubox::DynamicTemplates.create(template_name, template_path)
+=> { "RestClient::Response"=>"201", "message"=>"Template #{name} created!" }
+
+# For getting the list of all dynamic template of your organization
+Paubox::DynamicTemplates.list
+=>[{"id"=>1, "name"=>"test", "api_customer_id"=>11},
+ {"id"=>3, "name"=>"Test", "api_customer_id"=>11}]
+
+
+# For update the existing dynamic template
+dynamic_template = Paubox::DynamicTemplates.find(template_id)
+dynamic_template.update(template_path, template_name)
+=> {"RestClient::Response"=>"200", "message"=>"Template #{name} updated!"}
+
+# For delete the existing dynamic template
+dynamic_template = Paubox::DynamicTemplates.find(template_id)
+dynamic_template.delete
+=> {"RestClient::Response"=>"200", "message"=>"Template #{name} deleted!"}
+
+
+```
 
 ### Send Messages using Dynamic Templates
-Using [dynamic templates](https://docs.paubox.com/docs/paubox_email_api/dynamic_templates/) is similar to sending a regular message. Just create a `Paubox::TemplatedMessage` object and pass a `template` object with the name of the template and variables:
+Using above[dynamic templates](https://docs.paubox.com/docs/paubox_email_api/dynamic_templates/) is similar to sending a regular message. Just create a `Paubox::TemplatedMessage` object and pass a `template` object with the name of the template and variables:
 
 ```ruby
 require 'Paubox'
@@ -222,31 +254,6 @@ client.deliver_mail(templated_message)
 ```
 
 _Note that there is no `content` when using templated messages._
-
-
-### ADD Dynamic Template support to ruby SDK
-Create a `Paubox::DynamicTemplate` object, and the user can create, update and delete the dynamic template by passing params.
-
-
-```ruby
-
-
-dynamic_template = Paubox::DynamicTemplates.new
-template_name = 'name_of_template' 
-template_path = 'template_file_path'
-
-
-dynamic_template.create('template_name', template_path)
-=> {"RestClient::Response"=>"201", "message"=>"Template #{name} created!"}
-
-dynamic_template.update('template_name', template_path, template_id)
-=> {"RestClient::Response"=>"200", "message"=>"Template #{name} updated!"}
-
-dynamic_template.destroy(template_id)
-=> {"RestClient::Response"=>"200", "message"=>"Template #{name} deleted!"}
-
-
-```
 
 
 ### Checking Email Dispositions

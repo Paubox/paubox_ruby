@@ -52,8 +52,8 @@ module Paubox
 
     def send_request(method: :get, payload: {}, path: '')
       url = request_endpoint(path)
-      
-      RestClient::Request.execute(method: method, url: url, payload: payload)
+
+      RestClient::Request.execute(method: method, url: url, payload: payload, headers: auth_header)
     end
 
     private
