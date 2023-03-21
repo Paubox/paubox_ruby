@@ -38,4 +38,13 @@ RSpec.describe Paubox::Client do
       expect(response.code).to eq 200
     end
   end
+
+  describe '#send_request' do
+    it 'send request to API successfully' do
+      client = Paubox::Client.new
+      stub_request(:post, client.send(:request_endpoint, 'dynamic_templates'))
+      response = client.send_request(method: :post, payload: {}, path: 'dynamic_templates')
+      expect(response.code).to eq 200
+    end
+  end 
 end

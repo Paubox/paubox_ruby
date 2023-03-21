@@ -2,6 +2,7 @@
 
 require 'paubox/version'
 require 'paubox/client'
+require 'paubox/dynamic_templates'
 require 'paubox/format_helper'
 require 'paubox/mail_to_message'
 require 'paubox/message'
