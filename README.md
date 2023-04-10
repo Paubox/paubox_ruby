@@ -224,6 +224,47 @@ dynamic_template.delete
 
 ```
 
+### Manage Webhooks
+Can manage(create, update, find and delete) the Webhook. by using the following commands.
+
+```ruby
+require 'Paubox'
+require 'json'
+
+#These two arguments are necessary
+target_url = "Target url"
+events = "Event name"
+
+# For create the new Webhook
+Paubox::Webhook.create(target_url: 'https://webhook.site/77' signing_key: '11', api_key: '23', active: 'true', events: ["api_mail"])
+=> { "RestClient::Response"=>"201", 
+    "data" => {"id"=>1, "target_url"=>"https://webhook.site/39", "events"=>["api_mail_log_delivered"], "active"=>true, "signing_key"=>"test-1",  "api_key"=>"1221", "api_customer_id"=>11 }
+    "message"=>"Webhook created!" }
+
+# For getting the list of all Webhook of your organization
+Paubox::Webhook.list
+=>[ {"id"=>1, "target_url"=>"https://webhook.site/39", "events"=>["api_mail_log_delivered"], "active"=>true, "signing_key"=>"test-1", 
+  "api_key"=>"1221", 
+  "api_customer_id"=>11},
+ {"id"=>2, "target_url"=>"https://webhook.site/3984", "events"=>["api_mail_log_opened"], "active"=>true, "signing_key"=>"test-3", 
+  "api_key"=>"1231", 
+  "api_customer_id"=>11}]
+
+
+# For update the existing Webhook
+webhook = Paubox::Webhook.find(id)
+webhook.update(target_url: 'https://webhook.site/377' signing_key: 'test', api_key: '32', active: 'true', events: ["api_mail_log_delivered"])
+=> { "RestClient::Response"=>"200", 
+    "data" => {"id"=>1, "target_url"=>"https://webhook.site/39", "events"=>["api_mail_log_delivered"], "active"=>true, "signing_key"=>"test-2",  "api_key"=>"1241", "api_customer_id"=>11 }
+    "message"=>"Webhook updated!" }
+
+# For delete the existing Webhook
+webhook = Paubox::Webhook.find(template_id)
+webhook.delete
+=> {"RestClient::Response"=>"200", "message"=>"Webhook deleted!"}
+```
+
+
 ### Send Messages using Dynamic Templates
 Using above[dynamic templates](https://docs.paubox.com/docs/paubox_email_api/dynamic_templates/) is similar to sending a regular message. Just create a `Paubox::TemplatedMessage` object and pass a `template` object with the name of the template and variables:
 
