@@ -29,7 +29,7 @@ module Paubox
     def add_attachment(file_path)
       @packaged_attachments << { filename: file_path.split('/').last,
                                  content_type: `file --b --mime-type #{file_path}`.chomp,
-                                 content: Base64.encode64(File.read(file_path)) }
+                                 content: Base64.strict_encode64(File.read(file_path)) }
     end
 
     def attachments
@@ -46,7 +46,7 @@ module Paubox
       return (@packaged_attachments = []) if args.to_a.empty?
 
       args.each do |a|
-        a[:content] = base64_encode_if_needed(a[:content])
+        a[:content] = base64_encode_if_needed(("#{a[:content]}").delete("\n"))
         @packaged_attachments << a
       end
       @packaged_attachments

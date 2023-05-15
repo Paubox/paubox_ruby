@@ -21,6 +21,7 @@ module Paubox
     private
 
     def build_attachments
+      puts 'MailToMessage build_attachments'
       attachments = mail.attachments
       return [] if attachments.empty?
 
@@ -88,7 +89,7 @@ module Paubox
       file = Tempfile.new(encoding: 'ascii-8bit')
       file.write(f)
       file.rewind
-      Base64.encode64(file.read)
+      Base64.strict_encode64(file.read.delete("\n"))
     end
   end
 end

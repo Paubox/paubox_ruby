@@ -55,13 +55,13 @@ module Helpers
     def base64_encoded?(value)
       return false unless value.is_a?(String)
 
-      !value.strip.match(BASE64_REGEX).nil?
+      Base64.strict_encode64(Base64.decode64(value)) == value
     end
 
     def base64_encode_if_needed(str)
       return str if base64_encoded?(str.to_s)
 
-      Base64.encode64(str.to_s)
+      Base64.strict_encode64(str.to_s)
     end
   end
 end
