@@ -89,7 +89,7 @@ module Paubox
       file = Tempfile.new(encoding: 'ascii-8bit')
       file.write(f)
       file.rewind
-      Base64.strict_encode64(file.read.delete("\n"))
+      Base64.strict_encode64(file.read)
     end
   end
 end
