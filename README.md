@@ -30,7 +30,7 @@ Or install it yourself as:
     $ gem install paubox
 
 ### Getting Paubox API Credentials
-You will need to have a Paubox account. You can [sign up here](https://www.paubox.com/join/see-pricing?unit=messages).
+You will need to have a Paubox account. You can [sign up here](https://www.paubox.com/pricing/paubox-email-api).
 
 Once you have an account, follow the instructions on the Rest API dashboard to verify domain ownership and generate API credentials.
 
@@ -225,7 +225,7 @@ dynamic_template.delete
 ```
 
 ### Send Messages using Dynamic Templates
-Using above[dynamic templates](https://docs.paubox.com/docs/paubox_email_api/dynamic_templates/) is similar to sending a regular message. Just create a `Paubox::TemplatedMessage` object and pass a `template` object with the name of the template and variables:
+Using above[dynamic templates](https://docs.paubox.com/email-api/dynamic-templates) is similar to sending a regular message. Just create a `Paubox::TemplatedMessage` object and pass a `template` object with the name of the template and variables:
 
 ```ruby
 require 'Paubox'
