@@ -177,7 +177,7 @@ Returns service health. No authentication required in practice.
 ### Base URL
 
 ```
-https://next.paubox.com
+https://apx.paubox.com/forms
 ```
 
 ---
