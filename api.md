@@ -1,0 +1,282 @@
+# Paubox Ruby Gem — API Reference
+
+## Email API
+
+### Authentication
+
+All Email API requests use token-based authentication. Configure credentials once globally or pass them per client instance.
+
+**Global configuration:**
+```ruby
+Paubox.configure do |config|
+  config.api_key  = ENV['PAUBOX_API_KEY']
+  config.api_user = ENV['PAUBOX_API_USER']
+end
+```
+
+**Per-instance:**
+```ruby
+client = Paubox::Client.new(api_key: ENV['PAUBOX_API_KEY'], api_user: ENV['PAUBOX_API_USER'])
+```
+
+**Authorization header sent on every request:**
+```
+Authorization: Token token=<api_key>
+```
+
+### Base URL
+
+```
+https://api.paubox.net/v1/<api_user>
+```
+
+All Email API paths below are relative to this base.
+
+---
+
+### Send Message
+
+**POST** `/messages`
+
+Sends a HIPAA-compliant email.
+
+**Request body:**
+```json
+{
+  "data": {
+    "message": {
+      "recipients": ["recipient@example.com"],
+      "cc": [],
+      "bcc": [],
+      "allowNonTLS": false,
+      "headers": {
+        "from": "sender@yourdomain.com",
+        "reply-to": "reply@yourdomain.com",
+        "subject": "Hello"
+      },
+      "content": {
+        "text/plain": "Plain text body",
+        "text/html": "<h1>HTML body</h1>"
+      },
+      "attachments": [
+        {
+          "fileName": "file.pdf",
+          "contentType": "application/pdf",
+          "content": "<base64-encoded content>"
+        }
+      ]
+    }
+  }
+}
+```
+
+**Optional fields:**
+- `forceSecureNotification` (`"true"` / `"false"`) — forces portal delivery
+- `allowNonTLS` (`true` / `false`) — allows delivery without TLS
+
+**Response (200):**
+```json
+{ "message": "Service OK", "sourceTrackingId": "2a3c048485aa4cf6" }
+```
+
+---
+
+### Send Templated Message
+
+**POST** `/templated_messages`
+
+Sends a message using a dynamic template.
+
+**Request body:**
+```json
+{
+  "data": {
+    "recipients": ["recipient@example.com"],
+    "headers": { "from": "sender@yourdomain.com", "subject": "Hello" },
+    "template_name": "My Template",
+    "template_values": { "first_name": "Jane", "last_name": "Smith" }
+  }
+}
+```
+
+**Response (200):**
+```json
+{ "sourceTrackingId": "166904b5-dce7-4de1-92e8-3d505c165ff5", "data": "Service OK" }
+```
+
+---
+
+### Get Email Disposition
+
+**GET** `/message_receipt?sourceTrackingId=<id>`
+
+Returns delivery and open status for a sent message.
+
+**Response (200):**
+```json
+{
+  "sourceTrackingId": "2a3c048485aa4cf6",
+  "data": {
+    "message": {
+      "id": "...",
+      "message_deliveries": [
+        {
+          "recipient": "recipient@example.com",
+          "status": {
+            "deliveryStatus": "delivered",
+            "deliveryTime": "2024-01-15T12:54:19-07:00",
+            "openedStatus": "opened",
+            "openedTime": "2024-01-15T12:55:19-07:00"
+          }
+        }
+      ]
+    }
+  }
+}
+```
+
+---
+
+### Dynamic Templates
+
+All paths are relative to the Email API base URL.
+
+| Operation      | Method  | Path                          |
+|----------------|---------|-------------------------------|
+| List templates | GET     | `/dynamic_templates`          |
+| Get template   | GET     | `/dynamic_templates/<id>`     |
+| Create         | POST    | `/dynamic_templates`          |
+| Update         | PATCH   | `/dynamic_templates/<id>`     |
+| Delete         | DELETE  | `/dynamic_templates/<id>`     |
+
+**Create / Update request body** (`multipart/form-data`):
+- `data[name]` — template name
+- `data[body]` — template file
+
+---
+
+### API Status
+
+**GET** `/status`
+
+Returns service health. No authentication required in practice.
+
+**Response (200):**
+```json
+{ "message": "Service OK" }
+```
+
+---
+
+## Forms API
+
+### Authentication
+
+**None required.** Forms API endpoints are public and designed for form embed use cases. No API key or authorization header is sent.
+
+### Base URL
+
+```
+https://next.paubox.com
+```
+
+---
+
+### Get Form Metadata
+
+**GET** `/public/form_data/<form_id>`
+
+Returns the full form definition for a given UUID. Used to render a form to a respondent.
+
+**Path parameter:**
+- `form_id` (UUID, required) — the form to retrieve
+
+**Response (200):**
+```json
+{
+  "id": "550e8400-e29b-41d4-a716-446655440000",
+  "title": "Patient Intake Form",
+  "description": "Please complete before your appointment.",
+  "form_json": {},
+  "form_html": "<form>...</form>",
+  "form_css": "form { font-family: sans-serif; }",
+  "vanity_url": null,
+  "version": 1,
+  "active": true,
+  "customer_id": 123,
+  "signable": false,
+  "signature_confirmation_label": null,
+  "submission_count": 42,
+  "type": null,
+  "deleted": false,
+  "archived": false,
+  "created_at": "2024-01-15T10:30:00Z",
+  "updated_at": "2024-06-01T08:00:00Z"
+}
+```
+
+**Errors:**
+- `404` — form not found
+
+**Ruby usage:**
+```ruby
+client = Paubox::FormsClient.new
+form   = client.get_form('550e8400-e29b-41d4-a716-446655440000')
+
+form.title            # => "Patient Intake Form"
+form.active?          # => true
+form.signable?        # => false
+form.submission_count # => 42
+```
+
+---
+
+### Submit Form Response
+
+**POST** `/api/forms/<form_id>/submissions`
+
+Submits a respondent's answers for a form. On success, the service stores the submission, increments the submission count, emails configured recipients, and returns 201 with no body. Maximum request size is **250 MB**.
+
+**Path parameter:**
+- `form_id` (UUID, required) — the form being submitted
+
+**Request body:**
+```json
+{
+  "form_data": {
+    "first_name": "Jane",
+    "last_name": "Smith",
+    "email": "jane@example.com"
+  },
+  "attachments": [
+    {
+      "name": "consent.pdf",
+      "content": "<base64-encoded file content>"
+    }
+  ]
+}
+```
+
+- `form_data` (object, required) — key-value pairs matching the form's field schema
+- `attachments` (array, optional) — file attachments; each item requires `name` (filename) and `content` (base64-encoded)
+
+**Response:**
+- `201` — submission accepted (no body)
+- `400` — missing required `form_data` field
+- `404` — form not found
+
+**Ruby usage:**
+```ruby
+client = Paubox::FormsClient.new
+
+# Text fields only
+client.submit_form('550e8400-e29b-41d4-a716-446655440000',
+  form_data: { first_name: 'Jane', last_name: 'Smith', email: 'jane@example.com' })
+
+# With file attachments
+client.submit_form('550e8400-e29b-41d4-a716-446655440000',
+  form_data: { first_name: 'Jane', signature: '{signature_field}' },
+  attachments: [
+    { name: 'consent.pdf', content: Base64.strict_encode64(File.binread('consent.pdf')) }
+  ])
+```
