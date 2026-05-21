@@ -10,19 +10,21 @@ end
 RSpec.describe Paubox::FormsClient do
   let(:client)  { described_class.new }
   let(:form_id) { Helpers::FormHelper::FORM_ID }
-  let(:get_url) { "https://next.paubox.com/public/form_data/#{form_id}" }
-  let(:post_url) { "https://next.paubox.com/api/forms/#{form_id}/submissions" }
+  let(:get_url)  { "https://apx.paubox.com/forms/public/form_data/#{form_id}" }
+  let(:post_url) { "https://apx.paubox.com/forms/api/forms/#{form_id}/submissions" }
 
   describe '#initialize' do
-    it 'uses default host and protocol' do
-      expect(client.instance_variable_get(:@host)).to eq 'next.paubox.com'
+    it 'uses default host, protocol, and base' do
+      expect(client.instance_variable_get(:@host)).to eq 'apx.paubox.com'
       expect(client.instance_variable_get(:@protocol)).to eq 'https://'
+      expect(client.instance_variable_get(:@base)).to eq '/forms'
     end
 
-    it 'allows host override' do
-      custom = described_class.new(host: 'localhost:3000', protocol: '')
+    it 'allows host, protocol, and base override' do
+      custom = described_class.new(host: 'localhost:3000', protocol: '', base: '')
       expect(custom.instance_variable_get(:@host)).to eq 'localhost:3000'
       expect(custom.instance_variable_get(:@protocol)).to eq ''
+      expect(custom.instance_variable_get(:@base)).to eq ''
     end
   end
 
