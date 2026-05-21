@@ -8,6 +8,8 @@ require 'paubox/mail_to_message'
 require 'paubox/message'
 require 'paubox/templated_message'
 require 'paubox/email_disposition'
+require 'paubox/form'
+require 'paubox/forms_client'
 require 'mail/paubox'
 
 module Paubox

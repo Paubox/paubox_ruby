@@ -1,0 +1,86 @@
+# Paubox Ruby Gem — Developer Context
+
+## Purpose
+
+This is the official Ruby gem for the Paubox platform. It provides:
+- **Email API**: send HIPAA-compliant email, manage dynamic templates, check delivery status
+- **Forms API**: fetch form definitions and submit form responses
+
+## Directory Structure
+
+```
+lib/
+  paubox.rb                  # Entry point: requires all lib files, holds Configuration
+  paubox_ruby.rb             # Alias for paubox.rb
+  paubox/
+    version.rb               # Gem version constant
+    client.rb                # Email API client (authenticated, api.paubox.net)
+    forms_client.rb          # Forms API client (unauthenticated, next.paubox.com)
+    message.rb               # Builds send-message API payload from a hash
+    templated_message.rb     # Extends Message for template-based sends
+    mail_to_message.rb       # Adapts Ruby Mail::Message to API payload
+    dynamic_templates.rb     # CRUD for dynamic email templates
+    email_disposition.rb     # Parses delivery/open status responses
+    form.rb                  # Parses form metadata responses
+    format_helper.rb         # Shared utilities: base64, key mapping, normalization
+  mail/
+    paubox.rb                # Plugs Paubox into Ruby Mail as a delivery method
+
+spec/
+  spec_helper.rb             # RSpec + WebMock setup
+  paubox/                    # Unit specs per class
+  mail/                      # Specs for Ruby Mail integration
+  helpers/                   # Shared fixtures (MessageHelper, FormHelper, etc.)
+```
+
+## Key Classes
+
+| Class | Responsibility |
+|---|---|
+| `Paubox::Client` | Authenticated HTTP client for the Email API. Token auth via `Authorization: Token token=<key>`. Base URL: `https://api.paubox.net/v1/<api_user>`. |
+| `Paubox::FormsClient` | Unauthenticated HTTP client for the Forms API. Base URL: `https://next.paubox.com`. No API key needed. |
+| `Paubox::Message` | Builds the JSON payload for `/messages`. Accepts `from`, `to`, `cc`, `bcc`, `subject`, `text_content`, `html_content`, `attachments`. |
+| `Paubox::TemplatedMessage` | Extends `Message`; overrides `send_message_payload` to include `template_name` / `template_values`. |
+| `Paubox::MailToMessage` | Converts a `Mail::Message` object into a Paubox API payload. |
+| `Paubox::DynamicTemplates` | Manages template CRUD via class methods (`create`, `list`, `find`) and instance methods (`update`, `delete`). |
+| `Paubox::EmailDisposition` | Parses the `/message_receipt` response into `MessageDelivery` and `MessageDeliveryStatus` structs. |
+| `Paubox::Form` | Parses the `/public/form_data/<id>` response. Exposes predicate methods: `active?`, `deleted?`, `archived?`, `signable?`. |
+| `Paubox::FormatHelper` | Mixed into message builders; handles base64 encoding, snake_case→camelCase key mapping, email list normalization. |
+| `Mail::Paubox` | Delivery method for the Ruby Mail library. Delegates to `Paubox::Client`. |
+
+## Adding a New Feature
+
+### New API endpoint on the Email API
+1. Add a method to `Paubox::Client` that calls `send_request` or `RestClient` directly.
+2. If the response needs a structured model, create `lib/paubox/<model>.rb` following `EmailDisposition` as a pattern.
+3. Require the new file in `lib/paubox.rb`.
+4. Add specs in `spec/paubox/<feature>_spec.rb` using WebMock to stub HTTP.
+
+### New API endpoint on the Forms API
+1. Add a method to `Paubox::FormsClient`.
+2. If needed, add a response model following `Paubox::Form`.
+3. Require in `lib/paubox.rb`.
+4. Add specs in `spec/paubox/forms_client_spec.rb` or a new file.
+
+## Testing
+
+**Framework:** RSpec 3 + WebMock
+
+```bash
+bundle exec rspec                    # run all specs
+bundle exec rspec spec/paubox/form_spec.rb   # run a single file
+```
+
+WebMock stubs outbound HTTP. All specs must stub any HTTP calls they trigger — no real network requests are made.
+
+Fixtures live in `spec/helpers/` as includable modules (e.g. `Helpers::FormHelper`, `Helpers::MessageHelper`). Include them per spec file with `RSpec.configure { |c| c.include Helpers::XHelper }`.
+
+## Authentication
+
+- **Email API**: `Authorization: Token token=<api_key>` header on every request. Configured via `Paubox.configure` or `Paubox::Client.new(api_key:, api_user:)`.
+- **Forms API**: No authentication. `Paubox::FormsClient` sends no auth headers.
+
+## Dependencies
+
+- `rest-client` (~> 2.0) — HTTP client
+- `mail` (>= 2.5) — Ruby Mail integration

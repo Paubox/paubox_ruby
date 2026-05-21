@@ -1,15 +1,17 @@
 <img src="https://avatars.githubusercontent.com/u/22528478?s=200&v=4" alt="Paubox" width="150px">
 
 # Paubox Gem
-This is the official Ruby wrapper for the Paubox Email API. The Paubox Email API allows your application to send secure, HIPAA compliant email via Paubox and track deliveries and opens.
+This is the official Ruby wrapper for the Paubox API. It supports the Paubox Email API — which allows your application to send secure, HIPAA compliant email via Paubox and track deliveries and opens — and the Paubox Forms API, which allows you to fetch form definitions and submit form responses.
 
 It extends the [Ruby Mail Library](https://github.com/mikel/mail) for seamless integration in your existing Ruby application. The API wrapper also allows you to construct and send messages directly without the Ruby Mail Library.
 
 # Table of Contents
 * [Installation](#installation)
-*  [Usage](#usage)
-*  [Contributing](#contributing)
-*  [License](#license)
+* [Usage](#usage)
+  * [Sending Email](#sending-messages-with-the-ruby-mail-library)
+  * [Paubox Forms](#paubox-forms)
+* [Contributing](#contributing)
+* [License](#license)
 
 
 <a name="#installation"></a>
@@ -290,6 +292,66 @@ status.opened_status
 # opened_time is only available for single-recipient messages
 status.opened_time
 => Mon, 30 Apr 2018 12:55:19 -0700
+```
+
+<a name="#paubox-forms"></a>
+## Paubox Forms
+
+The Paubox Forms API requires **no authentication** — these endpoints are public and intended for form embed use cases.
+
+### Getting Form Metadata
+
+```ruby
+require 'Paubox'
+
+client = Paubox::FormsClient.new
+form   = client.get_form('550e8400-e29b-41d4-a716-446655440000')
+
+form.title            # => "Patient Intake Form"
+form.description      # => "Please complete before your appointment."
+form.active?          # => true
+form.signable?        # => false
+form.submission_count # => 42
+form.form_html        # => "<form>...</form>"
+form.form_json        # => { ... }
+```
+
+### Submitting a Form
+
+```ruby
+require 'Paubox'
+
+client = Paubox::FormsClient.new
+
+client.submit_form('550e8400-e29b-41d4-a716-446655440000',
+  form_data: {
+    first_name: 'Jane',
+    last_name:  'Smith',
+    email:      'jane@example.com'
+  })
+```
+
+### Submitting a Form with Attachments
+
+File attachments must be base64-encoded. The maximum request size is 250 MB.
+
+```ruby
+require 'Paubox'
+require 'base64'
+
+client = Paubox::FormsClient.new
+
+client.submit_form('550e8400-e29b-41d4-a716-446655440000',
+  form_data: {
+    first_name: 'Jane',
+    signature:  '{signature_field}'
+  },
+  attachments: [
+    {
+      name:    'consent.pdf',
+      content: Base64.strict_encode64(File.binread('consent.pdf'))
+    }
+  ])
 ```
 
 <a name="#contributing"></a>
