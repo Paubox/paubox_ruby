@@ -376,3 +376,8 @@ limitations under the License.
 ## Copyright
 Copyright &copy; 2022, Paubox, Inc.
 
+## 💬 Community & support
+
+Questions, ideas, or want to share what you built? Join the **[Paubox Community](https://github.com/Paubox/community/discussions)** — the single home for discussions across every Paubox SDK and API.
+
+🔐 Found a security issue? Email **devops@paubox.com** — please don't post it publicly.
