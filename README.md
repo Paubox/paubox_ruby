@@ -357,7 +357,7 @@ client.submit_form('550e8400-e29b-41d4-a716-446655440000',
 <a name="#contributing"></a>
 ## Contributing
 
-Bug reports and pull requests are welcome on GitHub at https://github.com/paubox/paubox_ruby.
+Bug reports and pull requests are welcome on GitHub at https://github.com/paubox/paubox-ruby.
 
 
 <a name="#license"></a>
