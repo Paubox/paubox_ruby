@@ -5,7 +5,8 @@ module Paubox
     attr_reader :id, :title, :description, :form_html, :form_json, :form_css,
                 :vanity_url, :version, :active, :customer_id, :signable,
                 :signature_confirmation_label, :submission_count, :type,
-                :deleted, :archived, :created_at, :updated_at
+                :deleted, :archived, :created_at, :updated_at,
+                :recipient, :subscription_list_id, :old_form_id
 
     def initialize(args = {})
       @id                           = args['id']
@@ -26,6 +27,9 @@ module Paubox
       @archived                     = args['archived']
       @created_at                   = args['created_at']
       @updated_at                   = args['updated_at']
+      @recipient                    = args['recipient']
+      @subscription_list_id         = args['subscription_list_id']
+      @old_form_id                  = args['old_form_id']
     end
 
     def active?

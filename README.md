@@ -1,7 +1,7 @@
 <img src="https://avatars.githubusercontent.com/u/22528478?s=200&v=4" alt="Paubox" width="150px">
 
 # Paubox Gem
-This is the official Ruby wrapper for the Paubox API. It supports the Paubox Email API — which allows your application to send secure, HIPAA compliant email via Paubox and track deliveries and opens — and the Paubox Forms API, which allows you to fetch form definitions and submit form responses.
+This is the official Ruby wrapper for the Paubox API. It supports the Paubox Email API — which allows your application to send secure, HIPAA compliant email via Paubox and track deliveries and opens — and the Paubox Forms API, which allows you to fetch form definitions, submit form responses, and manage forms and their submissions.
 
 It extends the [Ruby Mail Library](https://github.com/mikel/mail) for seamless integration in your existing Ruby application. The API wrapper also allows you to construct and send messages directly without the Ruby Mail Library.
 
@@ -297,9 +297,13 @@ status.opened_time
 <a name="#paubox-forms"></a>
 ## Paubox Forms
 
-The Paubox Forms API requires **no authentication** — these endpoints are public and intended for form embed use cases.
+The Paubox Forms API has two kinds of endpoints. **Public endpoints** (fetching a form definition, submitting a form) require no authentication and are intended for form embed use cases. **Authenticated endpoints** (managing forms and their submissions) require a Paubox API key scoped to `forms`.
 
-### Getting Form Metadata
+### Public Endpoints (No Authentication)
+
+These endpoints send no auth header, so `Paubox::FormsClient` can be constructed without any credentials.
+
+#### Getting Form Metadata
 
 ```ruby
 require 'Paubox'
@@ -316,7 +320,7 @@ form.form_html        # => "<form>...</form>"
 form.form_json        # => { ... }
 ```
 
-### Submitting a Form
+#### Submitting a Form
 
 ```ruby
 require 'Paubox'
@@ -331,7 +335,7 @@ client.submit_form('550e8400-e29b-41d4-a716-446655440000',
   })
 ```
 
-### Submitting a Form with Attachments
+#### Submitting a Form with Attachments
 
 File attachments must be base64-encoded. The maximum request size is 250 MB.
 
@@ -352,6 +356,146 @@ client.submit_form('550e8400-e29b-41d4-a716-446655440000',
       content: Base64.strict_encode64(File.binread('consent.pdf'))
     }
   ])
+```
+
+### Authenticated Endpoints (Scoped API Key)
+
+Form management endpoints require a Paubox API key scoped to `forms`. This is a different key from the Email API key (`Paubox.configuration.api_key`), which is never used for Forms endpoints. Pass the forms key when you instantiate the client, or configure it via `Paubox.configure` (the client falls back to `Paubox.configuration.forms_api_key`). The key is sent as an `Authorization: Bearer` header on every management request.
+
+```ruby
+require 'Paubox'
+
+client = Paubox::FormsClient.new(api_key: ENV['PAUBOX_FORMS_API_KEY'])
+
+# or globally:
+Paubox.configure { |config| config.forms_api_key = ENV['PAUBOX_FORMS_API_KEY'] }
+client = Paubox::FormsClient.new
+```
+
+Calling a management endpoint without an API key raises `ArgumentError`.
+
+#### Listing Forms
+
+Supports filtering, ordering, and pagination. `customer_id` is required and must match the API key's customer — the client raises `ArgumentError` without it. Optional params: `form_id`, `search`, `order` (`'asc'`/`'desc'`), `order_by` (`'title'`, `'updated_at'`, `'submission_count'`, `'created_at'`), `archived`, `active`, `page`, and `items` (capped at 100 by the server).
+
+```ruby
+result = client.list_forms(customer_id: 123, search: 'intake',
+                           order_by: 'updated_at', order: 'desc',
+                           page: 1, items: 25)
+
+result[:forms].first.title # => "Patient Intake Form"
+result[:page_info]         # => {"count"=>42, "pages"=>2, "page"=>1, "items"=>25}
+```
+
+#### Creating a Form
+
+Required attributes: `title`, `form_json`, `customer_id`, and `version`. Optional attributes include `description`, `form_html`, `form_css`, `recipient`, `signable`, `signature_confirmation_label`, `subscription_list_id`, `type`, and `active`.
+
+```ruby
+client.create_form(title: 'Patient Intake Form',
+                   form_json: { fields: [{ name: 'first_name' }] },
+                   customer_id: 123,
+                   version: 1,
+                   recipient: 'intake@yourdomain.com')
+=> {"id"=>"550e8400-e29b-41d4-a716-446655440000"}
+```
+
+#### Finding a Form
+
+Returns a `Paubox::Form`. Unlike the public `get_form`, `find_form` can fetch inactive and archived forms.
+
+```ruby
+form = client.find_form('550e8400-e29b-41d4-a716-446655440000')
+
+form.title     # => "Patient Intake Form"
+form.archived? # => false
+form.recipient # => "intake@yourdomain.com"
+```
+
+#### Updating a Form
+
+Updates are partial: fields you omit are left unchanged. Updatable fields: `title`, `description`, `form_json`, `vanity_url`, `recipient`, `active`, and `subscription_list_id`.
+
+```ruby
+client.update_form('550e8400-e29b-41d4-a716-446655440000',
+                   title: 'Patient Intake Form (v2)',
+                   active: false)
+=> {"detail"=>"Form updated successfully", "form_id"=>"550e8400-e29b-41d4-a716-446655440000"}
+```
+
+#### Archiving and Unarchiving a Form
+
+```ruby
+client.archive_form('550e8400-e29b-41d4-a716-446655440000')
+=> {"detail"=>"Form archived."}
+
+client.unarchive_form('550e8400-e29b-41d4-a716-446655440000')
+=> {"detail"=>"Form unarchived."}
+```
+
+#### Copying a Form
+
+Copies an existing form under a new title and returns the new form as a `Paubox::Form`.
+
+```ruby
+form = client.copy_form('550e8400-e29b-41d4-a716-446655440000',
+                        title: 'Patient Intake Form (Copy)')
+
+form.id    # => "7c9e6679-7425-40de-944b-e07fc1f90ae7"
+form.title # => "Patient Intake Form (Copy)"
+```
+
+#### Form Stats
+
+Returns aggregate counts. `customer_id` is optional and defaults server-side to the API key's customer.
+
+```ruby
+client.form_stats
+=> {"active_form_count"=>12, "total_submission_count"=>340, "submissions_last_7_days"=>18}
+
+client.form_stats(customer_id: 123)
+```
+
+#### Listing Submissions
+
+Returns `Paubox::FormSubmission` objects plus pagination info. Available params: `submission_id`, `order_by` (`'submitter_email'`, `'created_at'`), `order`, `page`, and `items` (capped at 100 by the server).
+
+```ruby
+result = client.list_submissions('550e8400-e29b-41d4-a716-446655440000',
+                                 order_by: 'created_at', order: 'desc')
+
+result[:total] # => 42
+result[:page]  # => 1
+result[:items] # => 25
+
+submission = result[:submissions].first
+submission.submitter_email # => "jane@example.com"
+submission.form_data       # => {"first_name"=>"Jane", "last_name"=>"Smith"}
+submission.created_at      # => "2026-08-01T12:34:56Z"
+```
+
+#### Downloading Submissions as CSV
+
+Returns the raw CSV as a `String`. Pass `submission_id:` to download a single submission.
+
+```ruby
+# All submissions for a form
+csv = client.submissions_csv('550e8400-e29b-41d4-a716-446655440000')
+File.write('submissions.csv', csv)
+
+# A single submission
+csv = client.submissions_csv('550e8400-e29b-41d4-a716-446655440000',
+                             submission_id: '7c9e6679-7425-40de-944b-e07fc1f90ae7')
+```
+
+#### Downloading a Submission as PDF
+
+Returns the raw PDF bytes as a `String`.
+
+```ruby
+pdf = client.submission_pdf('550e8400-e29b-41d4-a716-446655440000',
+                            '7c9e6679-7425-40de-944b-e07fc1f90ae7')
+File.binwrite('submission.pdf', pdf)
 ```
 
 <a name="#contributing"></a>

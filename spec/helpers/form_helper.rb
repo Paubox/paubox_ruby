@@ -34,5 +34,37 @@ module Helpers
     def sample_attachments
       [{ name: 'consent.pdf', content: 'JVBERi0xLjQ...' }]
     end
+
+    def sample_paged_forms_response
+      {
+        'results'   => [
+          sample_form_response,
+          sample_form_response.merge('id'    => 'a1b2c3d4-e5f6-7890-abcd-ef1234567890',
+                                     'title' => 'Consent Form')
+        ],
+        'page_info' => { 'count' => 2, 'pages' => 1, 'page' => 1, 'items' => 25 }
+      }
+    end
+
+    def sample_form_stats
+      {
+        'active_form_count'       => 5,
+        'total_submission_count'  => 120,
+        'submissions_last_7_days' => 7
+      }
+    end
+
+    def sample_create_form_attrs
+      {
+        title:       'New Intake Form',
+        form_json:   { fields: [{ name: 'first_name', type: 'text' }] },
+        customer_id: 123,
+        version:     1
+      }
+    end
+
+    def sample_update_form_response
+      { 'detail' => 'Form updated successfully', 'form_id' => FORM_ID }
+    end
   end
 end
