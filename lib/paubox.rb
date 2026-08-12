@@ -9,6 +9,7 @@ require 'paubox/message'
 require 'paubox/templated_message'
 require 'paubox/email_disposition'
 require 'paubox/form'
+require 'paubox/form_submission'
 require 'paubox/forms_client'
 require 'mail/paubox'
 
@@ -23,6 +24,6 @@ module Paubox
   end
 
   class Configuration
-    attr_accessor :api_key, :api_user
+    attr_accessor :api_key, :api_user, :forms_api_key
   end
 end
