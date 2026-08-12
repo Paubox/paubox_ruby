@@ -501,7 +501,7 @@ File.binwrite('submission.pdf', pdf)
 <a name="#contributing"></a>
 ## Contributing
 
-Bug reports and pull requests are welcome on GitHub at https://github.com/paubox/paubox_ruby.
+Bug reports and pull requests are welcome on GitHub at https://github.com/paubox/paubox-ruby.
 
 
 <a name="#license"></a>
