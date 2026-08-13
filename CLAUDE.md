@@ -14,8 +14,8 @@ lib/
   paubox_ruby.rb             # Alias for paubox.rb
   paubox/
     version.rb               # Gem version constant
-    client.rb                # Email API client (authenticated, api.paubox.net)
-    forms_client.rb          # Forms API client (apx.paubox.com; Bearer auth on management endpoints)
+    client.rb                # Email API client (authenticated, api.paubox.com)
+    forms_client.rb          # Forms API client (api.paubox.com/forms; Bearer auth on management endpoints)
     message.rb               # Builds send-message API payload from a hash
     templated_message.rb     # Extends Message for template-based sends
     mail_to_message.rb       # Adapts Ruby Mail::Message to API payload
@@ -38,8 +38,8 @@ spec/
 
 | Class | Responsibility |
 |---|---|
-| `Paubox::Client` | Authenticated HTTP client for the Email API. Token auth via `Authorization: Token token=<key>`. Base URL: `https://api.paubox.net/v1/<api_user>`. |
-| `Paubox::FormsClient` | HTTP client for the Forms API. Base URL: `https://apx.paubox.com/forms`. Public endpoints (`get_form`, `submit_form`) send no auth headers; management endpoints (list/create/find/update/archive/copy forms, stats, submissions, CSV/PDF export) require a "forms"-scoped API key sent as `Authorization: Bearer <api_key>`. |
+| `Paubox::Client` | Authenticated HTTP client for the Email API. Token auth via `Authorization: Token token=<key>`. Base URL: `https://api.paubox.com/v1`. |
+| `Paubox::FormsClient` | HTTP client for the Forms API. Base URL: `https://api.paubox.com/forms`. Public endpoints (`get_form`, `submit_form`) send no auth headers; management endpoints (list/create/find/update/archive/copy forms, stats, submissions, CSV/PDF export) require a "forms"-scoped API key sent as `Authorization: Bearer <api_key>`. |
 | `Paubox::Message` | Builds the JSON payload for `/messages`. Accepts `from`, `to`, `cc`, `bcc`, `subject`, `text_content`, `html_content`, `attachments`. |
 | `Paubox::TemplatedMessage` | Extends `Message`; overrides `send_message_payload` to include `template_name` / `template_values`. |
 | `Paubox::MailToMessage` | Converts a `Mail::Message` object into a Paubox API payload. |
@@ -79,7 +79,7 @@ Fixtures live in `spec/helpers/` as includable modules (e.g. `Helpers::FormHelpe
 
 ## Authentication
 
-- **Email API**: `Authorization: Token token=<api_key>` header on every request. Configured via `Paubox.configure` or `Paubox::Client.new(api_key:, api_user:)`.
+- **Email API**: `Authorization: Token token=<api_key>` header on every request. The API key alone authenticates — no username/user segment is needed. Configured via `Paubox.configure` or `Paubox::Client.new(api_key:)`. `Configuration` keeps a deprecated `api_user` accessor for backward compatibility; it is ignored.
 - **Forms API**: Public endpoints (`get_form`, `submit_form`) need no auth — `Paubox::FormsClient` sends no auth headers for them. Management endpoints require an API key with the "forms" scope (validated server-side, not by the gem), sent as `Authorization: Bearer <api_key>`. This is a separate key from the Email API key: configure it via `Paubox.configure { |c| c.forms_api_key = ... }` or `Paubox::FormsClient.new(api_key:)` — the client never falls back to `Paubox.configuration.api_key`. Calling a management endpoint without a key raises `ArgumentError`. Note: `list_forms` requires `customer_id` (must match the API key's customer, enforced server-side; the gem raises `ArgumentError` if it is missing).
 
 ## Dependencies

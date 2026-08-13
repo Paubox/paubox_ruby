@@ -4,20 +4,21 @@
 
 ### Authentication
 
-All Email API requests use token-based authentication. Configure credentials once globally or pass them per client instance.
+All Email API requests use token-based authentication. The API key alone authenticates — no username is required. Configure the key once globally or pass it per client instance.
 
 **Global configuration:**
 ```ruby
 Paubox.configure do |config|
-  config.api_key  = ENV['PAUBOX_API_KEY']
-  config.api_user = ENV['PAUBOX_API_USER']
+  config.api_key = ENV['PAUBOX_API_KEY']
 end
 ```
 
 **Per-instance:**
 ```ruby
-client = Paubox::Client.new(api_key: ENV['PAUBOX_API_KEY'], api_user: ENV['PAUBOX_API_USER'])
+client = Paubox::Client.new(api_key: ENV['PAUBOX_API_KEY'])
 ```
+
+_The `api_user` configuration option is deprecated and ignored._
 
 **Authorization header sent on every request:**
 ```
@@ -27,7 +28,7 @@ Authorization: Token token=<api_key>
 ### Base URL
 
 ```
-https://api.paubox.net/v1/<api_user>
+https://api.paubox.com/v1
 ```
 
 All Email API paths below are relative to this base.
@@ -177,7 +178,7 @@ Returns service health. No authentication required in practice.
 ### Base URL
 
 ```
-https://apx.paubox.com/forms
+https://api.paubox.com/forms
 ```
 
 ---

@@ -24,6 +24,10 @@ module Paubox
   end
 
   class Configuration
-    attr_accessor :api_key, :api_user, :forms_api_key
+    attr_accessor :api_key, :forms_api_key
+
+    # Deprecated: api_user is no longer used by the Email API client.
+    # Kept only for backward compatibility; it has no effect on requests.
+    attr_accessor :api_user
   end
 end

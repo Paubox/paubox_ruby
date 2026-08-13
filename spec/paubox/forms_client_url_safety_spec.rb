@@ -58,7 +58,7 @@ RSpec.describe Paubox::FormsClient, 'URL path safety' do
         it "rejects form_id=#{bad.inspect} before any HTTP request" do
           expect { call.call(client, bad) }
             .to raise_error(ArgumentError, /form_id must be a UUID string/)
-          expect(WebMock).not_to have_requested(:any, /apx\.paubox\.com/)
+          expect(WebMock).not_to have_requested(:any, /api\.paubox\.com/)
         end
       end
     end
@@ -72,7 +72,7 @@ RSpec.describe Paubox::FormsClient, 'URL path safety' do
       it "rejects submission_id=#{bad.inspect} even when form_id is valid" do
         expect { client.submissions_csv(valid_uuid, submission_id: bad) }
           .to raise_error(ArgumentError, /submission_id must be a UUID string/)
-        expect(WebMock).not_to have_requested(:any, /apx\.paubox\.com/)
+        expect(WebMock).not_to have_requested(:any, /api\.paubox\.com/)
       end
     end
   end
@@ -82,19 +82,19 @@ RSpec.describe Paubox::FormsClient, 'URL path safety' do
       it "rejects form_id=#{bad.inspect} before any HTTP request" do
         expect { client.submission_pdf(bad, another_valid_uuid) }
           .to raise_error(ArgumentError, /form_id must be a UUID string/)
-        expect(WebMock).not_to have_requested(:any, /apx\.paubox\.com/)
+        expect(WebMock).not_to have_requested(:any, /api\.paubox\.com/)
       end
 
       it "rejects submission_id=#{bad.inspect} when form_id is valid" do
         expect { client.submission_pdf(valid_uuid, bad) }
           .to raise_error(ArgumentError, /submission_id must be a UUID string/)
-        expect(WebMock).not_to have_requested(:any, /apx\.paubox\.com/)
+        expect(WebMock).not_to have_requested(:any, /api\.paubox\.com/)
       end
     end
   end
 
   describe 'valid UUIDs are unchanged in the URL' do
-    let(:find_url) { "https://apx.paubox.com/forms/api/forms/#{valid_uuid}" }
+    let(:find_url) { "https://api.paubox.com/forms/api/forms/#{valid_uuid}" }
 
     it 'sends the UUID verbatim (no double-encoding) for valid input' do
       stub_request(:get, find_url)
