@@ -44,9 +44,10 @@ Keep your API credentials out of version control. Store these in environment var
 ```ruby
 Paubox.configure do |config|
   config.api_key = ENV['PAUBOX_API_KEY']
-  config.api_user = ENV['PAUBOX_API_USER']
 end
 ```
+
+_Note: earlier versions of this gem also required an `api_user`. It is no longer needed — the API key alone authenticates. The `api_user` configuration option is deprecated and ignored._
 
 If you need to send from multiple domains, you can pass credentials in the options hash when you set Ruby Mail's `Mail#delivery_method`, or when using `Paubox::Message`, when you instantiate `Paubox::Client`.
 
@@ -55,16 +56,14 @@ If you need to send from multiple domains, you can pass credentials in the optio
 ```ruby
 message = Mail.new do
   ...
-  delivery_method(Mail::Paubox, api_key: ENV['PAUBOX_API_KEY'],
-                                api_user: ENV['PAUBOX_API_USER'])
+  delivery_method(Mail::Paubox, api_key: ENV['PAUBOX_API_KEY'])
 end
 ```
 
 **(optional) Setting credentials when using Paubox::Client:**
 
 ```ruby
-client = Paubox::Client.new(api_key: ENV['PAUBOX_API_KEY'],
-                            api_user: ENV['PAUBOX_API_USER'])
+client = Paubox::Client.new(api_key: ENV['PAUBOX_API_KEY'])
 ```
 
 <a name="#usage"></a>

@@ -5,12 +5,16 @@ module Paubox
   class Client
     require 'rest-client'
     require 'ostruct'
-    attr_reader :api_key, :api_user, :api_host, :api_protocol, :api_version
+    attr_reader :api_key, :api_host, :api_protocol, :api_version
+
+    # Deprecated: api_user is no longer used for authentication or URLs.
+    # It is kept only for backward compatibility and has no effect on requests.
+    attr_reader :api_user
 
     def initialize(args = {})
       args = defaults.merge(args)
       @api_key = args[:api_key]
-      @api_user = args[:api_user]
+      @api_user = args[:api_user] # deprecated no-op, kept for backward compatibility
       @api_host = args[:api_host]
       @api_protocol = args[:api_protocol]
       @api_version = args[:api_version]
@@ -65,7 +69,7 @@ module Paubox
     end
 
     def api_base_endpoint
-      "#{api_protocol}#{api_host}/#{api_version}/#{api_user}"
+      "#{api_protocol}#{api_host}/#{api_version}"
     end
 
     def request_endpoint(endpoint)
@@ -74,8 +78,8 @@ module Paubox
 
     def defaults
       { api_key: Paubox.configuration.api_key,
-        api_user: Paubox.configuration.api_user,
-        api_host: 'api.paubox.net', 
+        api_user: Paubox.configuration.api_user, # deprecated, unused
+        api_host: 'api.paubox.com',
         api_protocol: 'https://',
         api_version: 'v1',
         test_mode: false }

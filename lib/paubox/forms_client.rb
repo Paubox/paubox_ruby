@@ -5,7 +5,7 @@ require 'rest-client'
 
 module Paubox
   class FormsClient
-    FORMS_HOST     = 'apx.paubox.com'
+    FORMS_HOST     = 'api.paubox.com'
     FORMS_PROTOCOL = 'https://'
     FORMS_BASE     = '/forms'
 
