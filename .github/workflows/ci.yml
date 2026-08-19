@@ -1,0 +1,40 @@
+name: CI
+
+on:
+  pull_request:
+  push:
+    branches: [master]
+
+permissions:
+  contents: read
+
+jobs:
+  spec:
+    name: rspec (ruby ${{ matrix.ruby }})
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        ruby: ["3.1", "3.2", "3.3", "3.4"]
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: ${{ matrix.ruby }}
+          # Resolves bundler from the gemspec's own '~> 2.0' constraint and
+          # caches the installed gems.
+          bundler-cache: true
+
+      - name: Run specs
+        # Both formatters are explicit: a CLI --format overrides the one in
+        # .rspec, so without this the log would be empty on failure. The JSON
+        # file feeds the gate below.
+        run: >-
+          bundle exec rspec
+          --format documentation
+          --format json --out rspec-results.json
+
+      - name: Assert the suite actually executed
+        run: ruby .github/scripts/assert_specs_ran.rb rspec-results.json

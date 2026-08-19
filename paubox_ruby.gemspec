@@ -29,6 +29,10 @@ Gem::Specification.new do |spec|
   spec.add_development_dependency 'rspec', '~> 3.2'
   spec.add_development_dependency 'webmock', '~> 2.1'
 
+  # base64 and ostruct left the default gems (base64 in Ruby 3.4, ostruct in
+  # 4.0). lib/ requires both, so they must be declared or the gem fails to load.
+  spec.add_dependency 'base64'
+  spec.add_dependency 'ostruct'
   spec.add_dependency 'mail', '>= 2.5'
   spec.add_dependency 'rest-client', '~> 2.0', '>= 2.0.2'
 end

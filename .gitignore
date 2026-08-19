@@ -12,3 +12,6 @@
 # rspec failure tracking
 .rspec_status
 .gem
+
+# rspec JSON output written by CI.
+rspec-results.json
