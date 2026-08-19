@@ -5,8 +5,8 @@
 #
 # A passing run is not evidence of coverage: an error outside an example, a
 # stray tag filter, or a spec_helper that stops loading files can leave rspec
-# reporting success having executed almost nothing. The paubox-php suite sat in
-# exactly that state -- 8 tests, 8 errors, 0 assertions -- unnoticed.
+# reporting success having executed almost nothing. The failure mode is
+# invisible precisely because the exit code is 0.
 
 require 'json'
 
