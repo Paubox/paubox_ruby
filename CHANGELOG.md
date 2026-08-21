@@ -32,6 +32,22 @@ Not yet on RubyGems. The newest published version is still `0.3.2` from October 
 
 - Replace the dead Travis config with a GitHub Actions CI workflow running RSpec on Ruby 3.1 through 3.4
 
+## [1.0.0](https://github.com/Paubox/paubox-ruby/compare/v0.3.2...v1.0.0) (2026-08-21)
+
+
+### ⚠ BREAKING CHANGES
+
+* promotes the gem from 0.x to a stable 1.0.0. No public API is removed and existing code keeps working, but dependents pinned with a pessimistic 0.x constraint will not resolve 1.0.0 without widening it. This affects paubox_rails, whose gemspec requires paubox '~> 0.3'.
+
+### Features
+
+* promote to 1.0.0 ([52670ee](https://github.com/Paubox/paubox-ruby/commit/52670eeb68b7831ca2293108fd809e4de7cd25a9))
+
+
+### Bug Fixes
+
+* declare base64 and ostruct, which left the default gems ([7299324](https://github.com/Paubox/paubox-ruby/commit/729932436a8982c11f2a71d0d2327265160317d3))
+
 ## v0.3.2 / 2022-10-06
 
 ### 🚀 New Features
