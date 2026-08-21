@@ -86,3 +86,29 @@ Fixtures live in `spec/helpers/` as includable modules (e.g. `Helpers::FormHelpe
 
 - `rest-client` (~> 2.0) — HTTP client
 - `mail` (>= 2.5) — Ruby Mail integration
+
+## Releases
+
+Releases are automated with [release-please](https://github.com/googleapis/release-please). Merging to `master` refreshes a standing release PR; merging *that* PR bumps `lib/paubox/version.rb`, writes `CHANGELOG.md`, creates a bare `vX.Y.Z` tag and a GitHub release, and then **pushes the gem to RubyGems**.
+
+Do **not** hand-edit `VERSION` or add a `CHANGELOG.md` entry — release-please owns both.
+
+The next version comes from PR titles, so the title is the only thing that matters: `feat:` gives a minor bump, `fix:` a patch, and a `!` suffix or a `BREAKING CHANGE:` footer gives a major. `.github/workflows/pr-title.yml` rejects titles release-please cannot parse.
+
+To force a specific version, land an empty commit carrying a `Release-As` footer. Put the release notes in that commit's body — a bare `chore: release X` produces an empty changelog entry, because the commits it would otherwise draw from get dropped if they are not conventional:
+
+```bash
+git commit --allow-empty -m "chore: release 1.0.0" -m "Release-As: 1.0.0"
+```
+
+### Publishing
+
+Publishing uses RubyGems **trusted publishing** (OIDC) — there is no API key stored anywhere. RubyGems pins the trust to the repository and the workflow filename, so **renaming `release-please.yml` breaks publishing** until the trusted publisher entry for the `paubox` gem is updated to match.
+
+If a push fails, re-run the failed `publish` job from the Actions tab. Note that a re-run uses the workflow file from the original commit, so it only helps when the fix is on the RubyGems side; a fix to the workflow itself needs a new release.
+
+Version numbers on RubyGems are effectively permanent — a yank is only possible within 72 hours and never frees the number for reuse.
+
+### Relationship to `paubox_rails`
+
+`paubox_rails` depends on this gem. Its gemspec constraint has to allow whatever major version is current here, so a major bump in `paubox` requires a matching `paubox_rails` release that widens the constraint. Release `paubox` first.
