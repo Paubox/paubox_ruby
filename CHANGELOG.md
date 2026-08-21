@@ -2,9 +2,13 @@
 
 All notable changes to this project will be documented in this file.
 
-## Unreleased
+## [1.0.0](https://github.com/Paubox/paubox-ruby/compare/v0.3.2...v1.0.0) (2026-08-21)
 
-Not yet on RubyGems. The newest published version is still `0.3.2` from October 2022.
+First stable release. RubyGems had been on `0.3.2` since October 2022.
+
+### ⚠ BREAKING CHANGES
+
+- Promotes the gem from `0.x` to a stable `1.0.0`. No public API is removed and existing code keeps working, but dependents pinned with a pessimistic `0.x` constraint will not resolve `1.0.0` without widening it. This affects `paubox_rails`, whose gemspec requires `paubox '~> 0.3'`
 
 ### 🚀 New Features
 
@@ -26,7 +30,7 @@ Not yet on RubyGems. The newest published version is still `0.3.2` from October 
 
 ### 🐛 Fixes
 
-- Declare `base64` and `ostruct` as runtime dependencies. Both left the Ruby default gems (`base64` in 3.4, `ostruct` in 4.0) and `lib/` requires them, so the gem failed to load on Ruby 3.4 without them
+- Declare `base64` and `ostruct` as runtime dependencies. Both left the Ruby default gems (`base64` in 3.4, `ostruct` in 4.0) and `lib/` requires them, so the gem failed to load on Ruby 3.4 without them ([7299324](https://github.com/Paubox/paubox-ruby/commit/729932436a8982c11f2a71d0d2327265160317d3))
 
 ### 🎉 Enhancements
 
