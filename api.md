@@ -28,7 +28,7 @@ Authorization: Token token=<api_key>
 ### Base URL
 
 ```
-https://api.paubox.com/v1
+https://api.paubox.com/v1/email
 ```
 
 All Email API paths below are relative to this base.
@@ -178,7 +178,7 @@ Returns service health. No authentication required in practice.
 ### Base URL
 
 ```
-https://api.paubox.com/forms
+https://api.paubox.com/v1/forms
 ```
 
 ---

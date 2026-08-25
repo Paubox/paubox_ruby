@@ -19,20 +19,20 @@ RSpec.describe Paubox::Client do
     it 'can override default parameters' do
       client = Paubox::Client.new(api_key: 'test_key',
                                   api_protocol: '', api_host: 'localhost:3000', api_version: 'v2')
-      expect(client.send(:request_endpoint, 'test')).to eq 'localhost:3000/v2/test'
+      expect(client.send(:request_endpoint, 'test')).to eq 'localhost:3000/v2/email/test'
     end
   end
 
   describe '#api_base_endpoint' do
     it 'returns the correct URI' do
       client = Paubox::Client.new
-      expect(client.send(:api_base_endpoint)).to eq 'https://api.paubox.com/v1'
+      expect(client.send(:api_base_endpoint)).to eq 'https://api.paubox.com/v1/email'
     end
 
     it 'ignores api_user (deprecated no-op kept for backward compatibility)' do
       client = Paubox::Client.new(api_key: 'test_key', api_user: 'paubox_test')
       expect(client.api_user).to eq 'paubox_test'
-      expect(client.send(:api_base_endpoint)).to eq 'https://api.paubox.com/v1'
+      expect(client.send(:api_base_endpoint)).to eq 'https://api.paubox.com/v1/email'
     end
   end
 
