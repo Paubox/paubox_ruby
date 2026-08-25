@@ -69,7 +69,7 @@ module Paubox
     end
 
     def api_base_endpoint
-      "#{api_protocol}#{api_host}/#{api_version}"
+      "#{api_protocol}#{api_host}/#{api_version}/email"
     end
 
     def request_endpoint(endpoint)

@@ -38,3 +38,24 @@ jobs:
 
       - name: Assert the suite actually executed
         run: ruby .github/scripts/assert_specs_ran.rb rspec-results.json
+
+  route-check:
+    name: Base URLs are routed
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: "3.3"
+          bundler-cache: true
+
+      # Ask the client, so a base URL change cannot pass unprobed.
+      - name: Probe the base URLs the clients build
+        run: |
+          bundle exec ruby -Ilib -rjson -rpaubox -e '
+            Paubox.configure { |c| c.api_key = "route-check" }
+            puts Paubox::Client.new.send(:api_base_endpoint)
+            f = Paubox::FormsClient
+            puts "#{f::FORMS_PROTOCOL}#{f::FORMS_HOST}#{f::FORMS_BASE}"
+          ' | .github/scripts/route-check.sh
