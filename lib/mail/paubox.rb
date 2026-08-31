@@ -10,11 +10,11 @@ module Mail
 
     def deliver!(mail)
       client = ::Paubox::Client.new(settings)
-      response = client.send_mail(mail)
+      client.send_mail(mail)
     end
   end
 
   class Message
-    attr_accessor :source_tracking_id, :status, :allow_non_tls, :force_secure_notification
+    attr_accessor :source_tracking_id, :allow_non_tls, :force_secure_notification
   end
 end

@@ -17,7 +17,7 @@ module Paubox
       @text_content = args[:text_content]
       @html_content = args[:html_content]
       @packaged_attachments = []
-      @attachments = build_attachments(args[:attachments])
+      build_attachments(args[:attachments])
       @allow_non_tls = args.fetch(:allow_non_tls, false)
       @force_secure_notification = args.fetch(:force_secure_notification, nil)
     end
@@ -37,7 +37,7 @@ module Paubox
     end
 
     def attachments=(args)
-      @attachments = build_attachments(args)
+      build_attachments(args)
     end
 
     private

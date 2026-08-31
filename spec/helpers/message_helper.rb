@@ -18,10 +18,6 @@ module Helpers
       message_defaults.merge(args)
     end
 
-    def plain_text_message_args(args = {})
-      base_message_args({ 'body' => 'Test plain text body.' }.merge(args))
-    end
-
     def multipart_message_args(args = {})
       base_message_args({ text_content: 'Plain text body.', html_content: '<h1>Test HTML</h1>' }.merge(args))
     end
