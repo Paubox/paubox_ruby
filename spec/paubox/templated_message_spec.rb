@@ -18,4 +18,12 @@ RSpec.describe Paubox::TemplatedMessage do
     expect(parsed_payload['data']).to have_key('template_name')
     expect(parsed_payload['data']).to have_key('template_values')
   end
+
+  it 'keeps force_secure_notification in the payload' do
+    message = Paubox::TemplatedMessage.new(message_with_template_args(force_secure_notification: 'true'))
+
+    parsed_payload = JSON.parse(message.send_message_payload)
+
+    expect(parsed_payload['data']['message']['forceSecureNotification']).to be true
+  end
 end
