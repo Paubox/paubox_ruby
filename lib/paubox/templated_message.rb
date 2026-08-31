@@ -15,8 +15,6 @@ module Paubox
 
     def send_message_payload
       # template name and values must be outside the `message` object
-      msg = convert_keys_to_json_version(build_parts)
-
       template_params = {
         template_name: @template_name,
         template_values: @template_values.to_json

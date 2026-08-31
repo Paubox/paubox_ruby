@@ -37,10 +37,6 @@ module Paubox
         allow_non_tls: 'allowNonTLS', force_secure_notification: 'forceSecureNotification' }[key] || key.to_s
     end
 
-    # def get_values_whitelist(*vals)
-    #   vals.map { |k| next unless mail[k]; [ruby_to_json_key(k), mail[k]] }.to_h
-    # end
-
     def string_or_array_to_array(object)
       case object
       when String

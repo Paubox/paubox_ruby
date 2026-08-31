@@ -49,14 +49,12 @@ RSpec.describe Paubox::Message do
 
     it 'builds force secure notification valid value' do
       message = Paubox::Message.new(message_with_force_secure_notification_args)
-      tested_keys = %i[force_secure_notification]
       expected_results = true
       expect(message.send(:build_force_secure_notification)).to eq expected_results
     end
 
     it 'builds force secure notification invalid value' do
       message = Paubox::Message.new(message_with_invalid_force_secure_notification_args)
-      tested_keys = %i[force_secure_notification]
       expected_results = nil
       expect(message.send(:build_force_secure_notification)).to eq expected_results
     end
@@ -65,9 +63,5 @@ RSpec.describe Paubox::Message do
       message = Paubox::Message.new(message_with_attachment_args)
       expect(message.send(:build_parts)[:cc]).to eq ['first@test.paubox.com', 'second@paubox.com']
     end
-
-    # it 'remaps hash keys for JSON request' do
-    #   message = Paubox::Message.new(message_with_attachment_args)
-    # end
   end
 end

@@ -4,7 +4,6 @@ module Paubox
   # Client sends API requests to Paubox API
   class Client
     require 'rest-client'
-    require 'ostruct'
     attr_reader :api_key, :api_host, :api_protocol, :api_version
 
     # Deprecated: api_user is no longer used for authentication or URLs.
@@ -18,8 +17,6 @@ module Paubox
       @api_host = args[:api_host]
       @api_protocol = args[:api_protocol]
       @api_version = args[:api_version]
-      @test_mode = args[:test_mode]
-      @api_base_endpoint = api_base_endpoint
     end
 
     def api_status
@@ -50,7 +47,7 @@ module Paubox
     def email_disposition(source_tracking_id)
       url = "#{request_endpoint('message_receipt')}?sourceTrackingId=#{source_tracking_id}"
       response = RestClient.get(url, auth_header)
-      email_disposition = Paubox::EmailDisposition.new(JSON.parse(response.body))
+      Paubox::EmailDisposition.new(JSON.parse(response.body))
     end
     alias message_receipt email_disposition
 
@@ -81,15 +78,7 @@ module Paubox
         api_user: Paubox.configuration.api_user, # deprecated, unused
         api_host: 'api.paubox.com',
         api_protocol: 'https://',
-        api_version: 'v1',
-        test_mode: false }
-    end
-
-    # recursively converts a nested Hash into OpenStruct
-    def to_open_struct(hash)
-      OpenStruct.new(hash.each_with_object({}) do |(key, val), memo|
-        memo[key] = val.is_a?(Hash) ? to_open_struct(val) : val
-      end)
+        api_version: 'v1' }
     end
   end
 end
