@@ -54,6 +54,43 @@ module Paubox
     end
     alias message_receipt email_disposition
 
+    def schedule_mail(mail, scheduled_at)
+      case mail
+      when Mail::Message
+        allow_non_tls = mail.allow_non_tls.nil? ? false : mail.allow_non_tls
+        msg_payload = MailToMessage.new(mail, allow_non_tls: allow_non_tls).send_message_payload
+        msg_data = JSON.parse(msg_payload)['data']['message']
+      when Hash
+        msg_data = Message.new(mail).send_message_payload
+        msg_data = JSON.parse(msg_data)['data']['message']
+      when Paubox::Message
+        msg_data = JSON.parse(mail.send_message_payload)['data']['message']
+      end
+      payload = { data: { message: msg_data, scheduled_at: scheduled_at } }.to_json
+      url = request_endpoint('schedule')
+      response = RestClient.post(url, payload, auth_header)
+      JSON.parse(response.body)
+    end
+
+    def get_scheduled(source_tracking_id)
+      url = request_endpoint("schedule/#{source_tracking_id}")
+      response = RestClient.get(url, auth_header)
+      JSON.parse(response.body)
+    end
+
+    def reschedule(source_tracking_id, scheduled_at)
+      url = request_endpoint("schedule/#{source_tracking_id}")
+      payload = { scheduled_at: scheduled_at }.to_json
+      response = RestClient.patch(url, payload, auth_header)
+      JSON.parse(response.body)
+    end
+
+    def cancel_scheduled(source_tracking_id)
+      url = request_endpoint("schedule/#{source_tracking_id}/cancel")
+      response = RestClient.post(url, nil, auth_header)
+      JSON.parse(response.body)
+    end
+
     def send_request(method: :get, payload: {}, path: '')
       url = request_endpoint(path)
 
