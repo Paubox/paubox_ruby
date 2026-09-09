@@ -2,6 +2,18 @@
 
 All notable changes to this project will be documented in this file.
 
+## [1.1.0](https://github.com/Paubox/paubox-ruby/compare/v1.0.0...v1.1.0) (2026-09-09)
+
+
+### Features
+
+* add scheduled send support ([#26](https://github.com/Paubox/paubox-ruby/issues/26)) ([9ddb07a](https://github.com/Paubox/paubox-ruby/commit/9ddb07a20f41874a10be6e0479cb943e833b336d))
+
+
+### Bug Fixes
+
+* target the documented /v1/email and /v1/forms base URLs ([#24](https://github.com/Paubox/paubox-ruby/issues/24)) ([3a32459](https://github.com/Paubox/paubox-ruby/commit/3a324596ef8e9237d5da15246b36a21baf3df688))
+
 ## [1.0.0](https://github.com/Paubox/paubox-ruby/compare/v0.3.2...v1.0.0) (2026-08-21)
 
 First stable release. RubyGems had been on `0.3.2` since October 2022.
